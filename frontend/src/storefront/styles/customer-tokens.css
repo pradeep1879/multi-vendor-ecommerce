@@ -1,0 +1,51 @@
+/* Customer tokens are scoped so the administration workspace retains its design. */
+.customer-store {
+  --store-font: 'Assistant', Arial, sans-serif;
+  --store-ink: #121212;
+  --store-muted: #666;
+  --store-line: #dedede;
+  --store-soft: #f7f7f7;
+  --store-white: #fff;
+  --store-dark: #101010;
+  --store-accent: #b82b70;
+  --store-width: 1200px;
+  --store-gutter: 50px;
+  --store-space-xs: 8px;
+  --store-space-sm: 16px;
+  --store-space-md: 24px;
+  --store-space-lg: 40px;
+  --store-space-xl: 64px;
+  --store-control-height: 48px;
+  --store-radius: 0;
+  --ink: var(--store-ink);
+  --muted: var(--store-muted);
+  --line: var(--store-line);
+  --paper: var(--store-white);
+  --serif: var(--store-font);
+  background: var(--store-white);
+  color: var(--store-ink);
+  font-family: var(--store-font);
+  font-size: 16px;
+  line-height: 1.65;
+  letter-spacing: 0.025em;
+  min-height: 100vh;
+}
+@theme inline {
+  --color-store-ink: var(--store-ink);
+  --color-store-muted: var(--store-muted);
+  --color-store-line: var(--store-line);
+  --color-store-soft: var(--store-soft);
+  --color-store-accent: var(--store-accent);
+  --font-store: var(--store-font);
+}
+@media (max-width: 989px) {
+  .customer-store {
+    --store-gutter: 32px;
+  }
+}
+@media (max-width: 599px) {
+  .customer-store {
+    --store-gutter: 20px;
+    --store-space-xl: 40px;
+  }
+}

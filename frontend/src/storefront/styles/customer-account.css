@@ -1,0 +1,270 @@
+.store-account {
+  padding-block: 40px 80px;
+}
+.store-account-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+.customer-store .store-account-heading h1 {
+  font-size: 36px;
+  font-weight: 400;
+}
+.store-account-heading button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  min-height: 44px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.store-account-layout {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: 48px;
+  align-items: start;
+}
+.store-account-layout > aside {
+  position: sticky;
+  top: 104px;
+  align-self: start;
+  max-height: calc(100dvh - 120px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #c9c9c9 transparent;
+}
+.store-account-layout > aside nav {
+  display: grid;
+  gap: 10px;
+}
+.store-account-nav-section {
+  display: grid;
+  gap: 3px;
+}
+.store-account-nav-label {
+  padding: 8px 14px 5px;
+  color: var(--store-muted);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+.store-account-layout > aside a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  font-size: 15px;
+  color: var(--store-muted);
+  border-left: 2px solid transparent;
+  transition:
+    color 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease,
+    padding-left 160ms ease;
+}
+.store-account-layout > aside a:hover {
+  color: var(--store-ink);
+  background: #fafafa;
+}
+.store-account-layout > aside a.active {
+  background: var(--store-soft);
+  border-color: var(--store-ink);
+  color: var(--store-ink);
+}
+.store-account-layout > aside a:focus-visible {
+  outline-offset: -2px;
+}
+.store-account-content {
+  min-width: 0;
+}
+.store-account-mobile {
+  display: none;
+}
+.store-account-content .font-store {
+  font-weight: 400;
+  letter-spacing: 0.025em;
+}
+.store-account-content input:not([type='checkbox']):not([type='radio']),
+.store-account-content select {
+  min-height: 46px;
+  font-size: 15px;
+  border-radius: 0;
+}
+.store-account-content input[type='checkbox'],
+.store-account-content input[type='radio'] {
+  accent-color: var(--store-ink);
+}
+.store-account-content textarea {
+  font-size: 15px;
+  min-width: 0;
+  width: 100%;
+}
+.store-account-content button {
+  min-height: 42px;
+}
+.store-account-content .animate-pulse {
+  background: var(--store-soft);
+}
+.customer-store select:not([multiple]) {
+  -webkit-appearance: none;
+  appearance: none;
+  padding-right: 38px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%234b5b70' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px 16px;
+}
+.store-account-content h2 {
+  font-size: 28px;
+}
+.store-account-content section {
+  box-shadow: none;
+}
+.store-auth {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 64px 20px 80px;
+  min-height: 60vh;
+}
+.customer-store .store-auth h1 {
+  font-size: 36px;
+  font-weight: 400;
+  text-align: center;
+  line-height: 1.25;
+  margin-bottom: 20px;
+}
+.store-auth h1 em {
+  font: inherit;
+  color: inherit;
+}
+.store-auth-description {
+  text-align: center;
+  color: var(--store-muted);
+  margin: 0 0 32px;
+  line-height: 1.7;
+}
+.customer-store .store-auth .auth-form {
+  display: grid;
+  gap: 20px;
+  text-align: left;
+}
+.customer-store .auth-field {
+  font-size: 15px;
+  gap: 8px;
+  color: var(--store-ink);
+}
+.customer-store .auth-field input {
+  min-height: 50px;
+  border-color: #aaa;
+  font-size: 16px;
+  background: white;
+  color: var(--store-ink);
+}
+.customer-store .password-input input {
+  padding-right: 48px;
+}
+.customer-store .auth-links,
+.customer-store .auth-switch,
+.customer-store .auth-hint {
+  font-size: 14px;
+  color: var(--store-muted);
+}
+.customer-store .auth-links a,
+.customer-store .auth-switch a,
+.customer-store .auth-hint a {
+  text-decoration: underline;
+  color: var(--store-ink);
+  text-underline-offset: 4px;
+}
+.customer-store .auth-switch {
+  margin-top: 28px;
+  text-align: center;
+}
+.customer-store .auth-divider {
+  margin: 24px 0;
+  color: var(--store-muted);
+}
+.customer-store .password-strength {
+  background: var(--store-soft);
+  border-color: var(--store-line);
+  font-size: 13px;
+}
+.customer-store .password-strength li,
+.customer-store .password-strength p {
+  font-size: 13px;
+}
+.customer-store .form-error,
+.customer-store .auth-success {
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 16px;
+}
+.customer-store .google-auth-container {
+  margin-inline: auto;
+}
+.customer-store button[data-store-variant='default'] {
+  background: var(--store-dark);
+  color: white;
+}
+.customer-store button[data-store-variant='outline'] {
+  border-color: var(--store-line);
+  color: var(--store-ink);
+}
+.customer-store button[data-store-variant='ghost'] {
+  color: var(--store-ink);
+}
+.customer-store button[data-store-variant] {
+  font-family: var(--store-font);
+  font-size: 14px;
+  min-height: 44px;
+  white-space: normal;
+  line-height: 1.4;
+}
+@media (max-width: 989px) {
+  .store-account-layout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .store-account-layout > aside {
+    display: none;
+  }
+  .store-account-mobile {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 28px;
+    font-size: 14px;
+  }
+  .store-account-mobile select {
+    width: 100%;
+    min-height: 48px;
+    border: 1px solid var(--store-line);
+    padding: 10px;
+    background: white;
+  }
+  .store-account-content h2 {
+    font-size: 26px;
+  }
+}
+@media (max-width: 599px) {
+  .store-account {
+    padding-block: 28px 48px;
+  }
+  .store-account-heading {
+    margin-bottom: 28px;
+  }
+  .customer-store .store-account-heading h1 {
+    font-size: 30px;
+  }
+  .store-auth {
+    padding-block: 40px 56px;
+  }
+  .customer-store .store-auth h1 {
+    font-size: 30px;
+  }
+}
