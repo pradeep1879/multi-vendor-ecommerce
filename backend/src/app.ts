@@ -100,3 +100,4 @@ export function createApp(
 
 const environment = loadEnvironment();
 export const app = createApp(createApiRouter(environment), environment);
+export default app;
