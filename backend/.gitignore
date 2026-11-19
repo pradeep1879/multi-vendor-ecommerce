@@ -1,7 +1,8 @@
 # dependencies (bun install)
 node_modules
 scripts
-
+ 
+ 
 # output
 out
 dist
