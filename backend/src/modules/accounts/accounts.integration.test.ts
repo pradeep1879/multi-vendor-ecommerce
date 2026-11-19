@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
 import type { Server } from 'node:http';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from '../../../generated/prisma/client.js';
+import { PrismaClient } from '../../prisma-client/client.js';
 import { createApp } from '../../app.js';
 import { loadEnvironment } from '../../config/env.js';
 import { disconnectDatabase } from '../../infrastructure/database/client.js';

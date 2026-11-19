@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from '../generated/prisma/client';
+import { PrismaClient } from '../src/prisma-client/client.js';
 import { randomUUID } from 'node:crypto';
 
 if (process.env.CATALOG_SEED_CONFIRM !== 'insert-50-products') {

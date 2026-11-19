@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from '../../../generated/prisma/client.js';
+import { PrismaClient } from '../../prisma-client/client.js';
 
 const testDatabaseUrl = process.env.TEST_DATABASE_URL;
 const databaseName = testDatabaseUrl

@@ -1,4 +1,4 @@
-import { PrismaClient } from '../generated/prisma/client.js';
+import { PrismaClient } from '../src/prisma-client/client.js';
 import { PrismaPg } from '@prisma/adapter-pg';
 
 if (process.env.NODE_ENV === 'production') {
