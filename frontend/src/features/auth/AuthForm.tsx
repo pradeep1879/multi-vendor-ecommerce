@@ -18,7 +18,13 @@ declare global {
           initialize: (options: {
             client_id: string;
             callback: (response: { credential?: string }) => void;
+            context?: string;
+            auto_select?: boolean;
           }) => void;
+          prompt: (listener?: (notification: {
+            isNotDisplayed: () => boolean;
+            isSkippedMoment: () => boolean;
+          }) => void) => void;
           renderButton: (
             element: HTMLElement,
             options: { theme: string; size: string; width: number; type?: string; text?: string },

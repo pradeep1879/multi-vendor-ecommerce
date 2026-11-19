@@ -7,7 +7,6 @@ import { errorMessage } from './auth-error';
 import { showToast } from '../../../components/feedback/toast';
 
 export function GoogleAuthButton() {
-  const element = useRef<HTMLDivElement>(null);
   const processing = useRef(false);
   const [message, setMessage] = useState('');
   useEffect(() => {
@@ -36,12 +35,14 @@ export function GoogleAuthButton() {
       }
     }, 15000);
     const mount = async () => {
-      if (cancelled || initialized || !window.google || !element.current) return;
+      if (cancelled || initialized || !window.google) return;
       initialized = true;
       try {
-        if (cancelled || !element.current) return;
+        if (cancelled) return;
         window.google!.accounts.id.initialize({
           client_id: clientId,
+          context: 'signin',
+          auto_select: false,
           callback: async ({ credential }) => {
             if (cancelled || processing.current) return;
             processing.current = true;
@@ -79,14 +80,6 @@ export function GoogleAuthButton() {
               if (!cancelled) setSigningIn(false);
             }
           },
-        });
-        element.current.replaceChildren();
-        window.google!.accounts.id.renderButton(element.current, {
-          type: 'standard',
-          text: 'signin_with',
-          theme: 'outline',
-          size: 'large',
-          width: Math.min(396, element.current.clientWidth || 396),
         });
         window.clearTimeout(timeout);
         setInitializing(false);
@@ -134,22 +127,37 @@ export function GoogleAuthButton() {
       script.removeEventListener('load', mount);
     };
   }, [adminOnly, navigate, queryClient]);
+  const startGoogleSignIn = () => {
+    const googleIdentity = window.google?.accounts.id;
+    if (!googleIdentity || initializing || signingIn) return;
+    setMessage('');
+    googleIdentity.prompt((notification) => {
+      if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+        setMessage('Google sign-in could not open. Check your browser privacy settings and try again.');
+      }
+    });
+  };
   return (
     <div className="google-auth-wrap" aria-busy={initializing || signingIn}>
       <div className="google-auth-frame relative">
-        <div ref={element} className="google-auth-button" />
-        {(initializing || signingIn) && (
-          <div
-            className="absolute inset-0 flex items-center justify-center gap-2 bg-white text-sm text-[#515c43]"
-            role="status"
-          >
-            <span
-              className="h-4 w-4 animate-spin rounded-full border-2 border-[#515c43] border-t-transparent"
-              aria-hidden="true"
-            />
-            {signingIn ? 'Signing in with Google…' : 'Loading Google sign in…'}
-          </div>
-        )}
+        <button
+          type="button"
+          className="google-auth-button"
+          onClick={startGoogleSignIn}
+          disabled={initializing || signingIn}
+        >
+          {signingIn ? (
+            <span className="google-auth-spinner" aria-hidden="true" />
+          ) : (
+            <svg viewBox="0 0 48 48" aria-hidden="true">
+              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5Z" />
+              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.73 7.18l7.3 5.66c4.27-3.94 7.47-9.77 7.47-17.31Z" />
+              <path fill="#FBBC05" d="M10.53 28.59a14.5 14.5 0 0 1 0-9.18l-7.98-6.2a23.95 23.95 0 0 0 0 21.58l7.98-6.2Z" />
+              <path fill="#34A853" d="M24 48c6.47 0 11.9-2.13 15.87-5.8l-7.3-5.66c-2.03 1.36-4.64 2.16-8.57 2.16-6.26 0-11.57-4.22-13.46-9.91l-7.98 6.2C6.51 42.62 14.62 48 24 48Z" />
+            </svg>
+          )}
+          <span>{initializing ? 'Loading Google sign-in…' : signingIn ? 'Signing in…' : 'Sign in with Google'}</span>
+        </button>
       </div>
     </div>
   );
