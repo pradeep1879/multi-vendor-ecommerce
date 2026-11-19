@@ -168,13 +168,20 @@ authTest('Authentication and session lifecycle', () => {
       email_verified: true,
       name: 'Unverified Customer',
     };
-    const unsafeLink = await fetch(`${baseUrl}/api/v1/auth/google`, {
+    const verifiedGoogleLink = await fetch(`${baseUrl}/api/v1/auth/google`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ idToken: 'fixture-google-id-token'.padEnd(120, 'x') }),
     });
-    expect(unsafeLink.status).toBe(409);
-    expect(await prisma.externalIdentity.count({ where: { userId: unverifiedId } })).toBe(0);
+    const verifiedGoogleResult = (await verifiedGoogleLink.json()) as {
+      data: { user: { id: string }; accessToken: string };
+    };
+    expect(verifiedGoogleLink.status).toBe(200);
+    expect(verifiedGoogleResult.data.user.id).toBe(unverifiedId);
+    expect(await prisma.externalIdentity.count({ where: { userId: unverifiedId } })).toBe(1);
+    expect(
+      (await prisma.user.findUniqueOrThrow({ where: { id: unverifiedId } })).emailVerifiedAt,
+    ).not.toBeNull();
   });
 
   afterAll(async () => {

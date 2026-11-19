@@ -186,12 +186,6 @@ export class AuthService {
     const existing = identity ? null : await this.repository.findUserForGoogleLink(email);
     if (existing?.disabledAt)
       throw new AppError(403, 'ACCOUNT_DISABLED', 'This account is disabled.');
-    if (existing && !existing.emailVerifiedAt)
-      throw new AppError(
-        409,
-        'ACCOUNT_LINK_REQUIRES_VERIFICATION',
-        'Verify the existing account email before linking Google sign-in.',
-      );
     const refresh = this.createRefreshSession();
     try {
       const account = await this.repository.createGoogleSession({

@@ -81,6 +81,15 @@ export class AuthRepository {
         create: { userId: user.id },
         update: {},
       });
+      // The service only calls this method after verifying Google's signed ID
+      // token and confirming the provider marked this exact email verified.
+      if (!user.emailVerifiedAt) {
+        user = await tx.user.update({
+          where: { id: user.id },
+          data: { emailVerifiedAt: new Date() },
+          include: { roles: true, vendor: { select: { status: true } } },
+        });
+      }
       if (!identity)
         await tx.externalIdentity.create({
           data: {
