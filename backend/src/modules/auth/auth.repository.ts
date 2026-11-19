@@ -1,4 +1,4 @@
-import { getPrismaClient } from '../../infrastructure/database/client';
+import { getPrismaClient } from '../../infrastructure/database/client.js';
 
 export type SessionSeed = {
   id: string;

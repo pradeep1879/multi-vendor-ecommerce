@@ -1,5 +1,5 @@
-import { disconnectDatabase } from '../../infrastructure/database/client';
-import { processSearchOutboxBatch, reindexProducts } from './search-jobs';
+import { disconnectDatabase } from '../../infrastructure/database/client.js';
+import { processSearchOutboxBatch, reindexProducts } from './search-jobs.js';
 
 const command = process.argv[2];
 try {

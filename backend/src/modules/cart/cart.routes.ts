@@ -4,13 +4,13 @@ import {
   getAuthContext,
   authentication,
   requireRole,
-} from '../../common/middleware/authentication';
-import { sendData } from '../../common/middleware/response';
-import { getValidatedRequest, validateRequest } from '../../common/validation/validate-request';
-import type { Environment } from '../../config/env';
-import { AuthService } from '../auth/auth.service';
-import { CartService } from './cart.service';
-import { CheckoutPreviewService } from './checkout-preview.service';
+} from '../../common/middleware/authentication.js';
+import { sendData } from '../../common/middleware/response.js';
+import { getValidatedRequest, validateRequest } from '../../common/validation/validate-request.js';
+import type { Environment } from '../../config/env.js';
+import { AuthService } from '../auth/auth.service.js';
+import { CartService } from './cart.service.js';
+import { CheckoutPreviewService } from './checkout-preview.service.js';
 
 const itemParams = z.object({ itemId: z.uuid() }).strict();
 const quantity = z.object({ quantity: z.number().int().min(1).max(100) }).strict();

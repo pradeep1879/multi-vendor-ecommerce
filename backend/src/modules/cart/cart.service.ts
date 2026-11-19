@@ -1,7 +1,7 @@
-import { AppError } from '../../common/errors/app-error';
-import type { Environment } from '../../config/env';
-import { CartCache, type CachedCart } from './cart.cache';
-import { CartRepository } from './cart.repository';
+import { AppError } from '../../common/errors/app-error.js';
+import type { Environment } from '../../config/env.js';
+import { CartCache, type CachedCart } from './cart.cache.js';
+import { CartRepository } from './cart.repository.js';
 
 export class CartService {
   private readonly cache: CartCache;

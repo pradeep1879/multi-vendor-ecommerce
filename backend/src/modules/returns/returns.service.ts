@@ -1,5 +1,5 @@
-import { AppError } from '../../common/errors/app-error';
-import { ReturnsRepository, type ReturnTransition } from './returns.repository';
+import { AppError } from '../../common/errors/app-error.js';
+import { ReturnsRepository, type ReturnTransition } from './returns.repository.js';
 
 export class ReturnsService {
   constructor(private readonly repository = new ReturnsRepository()) {}

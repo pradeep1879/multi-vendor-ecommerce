@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
-import { AppError } from '../../common/errors/app-error';
-import { WishlistService } from './wishlist.service';
+import { AppError } from '../../common/errors/app-error.js';
+import { WishlistService } from './wishlist.service.js';
 
 describe('customer wishlist rules', () => {
   test('returns only the authenticated user’s saved items', async () => {

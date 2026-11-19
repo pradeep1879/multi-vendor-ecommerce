@@ -1,4 +1,4 @@
-import type { Environment } from '../../config/env';
+import type { Environment } from '../../config/env.js';
 
 export const PRODUCT_INDEX = 'marketplace-products-v1';
 

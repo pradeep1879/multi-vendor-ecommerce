@@ -1,11 +1,11 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
 import type { Server } from 'node:http';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from '../../../generated/prisma/client';
-import { createApp } from '../../app';
-import { loadEnvironment } from '../../config/env';
-import { disconnectDatabase } from '../../infrastructure/database/client';
-import { createApiRouter } from '../../routes';
+import { PrismaClient } from '../../../generated/prisma/client.js';
+import { createApp } from '../../app.js';
+import { loadEnvironment } from '../../config/env.js';
+import { disconnectDatabase } from '../../infrastructure/database/client.js';
+import { createApiRouter } from '../../routes.js';
 
 const url = process.env.TEST_DATABASE_URL;
 if (url && !new URL(url).pathname.split('/').at(-1)?.endsWith('_test'))

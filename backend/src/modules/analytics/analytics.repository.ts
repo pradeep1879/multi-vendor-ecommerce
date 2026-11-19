@@ -1,4 +1,4 @@
-import { getPrismaClient } from '../../infrastructure/database/client';
+import { getPrismaClient } from '../../infrastructure/database/client.js';
 
 export class AnalyticsRepository {
   async adminSummary(from: Date, to: Date) {

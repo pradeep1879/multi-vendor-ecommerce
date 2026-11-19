@@ -1,8 +1,8 @@
 import type { RequestHandler } from 'express';
-import { getAuthContext } from '../../common/middleware/authentication';
-import { sendData } from '../../common/middleware/response';
-import { getValidatedRequest } from '../../common/validation/validate-request';
-import type { AccountsService } from './accounts.service';
+import { getAuthContext } from '../../common/middleware/authentication.js';
+import { sendData } from '../../common/middleware/response.js';
+import { getValidatedRequest } from '../../common/validation/validate-request.js';
+import type { AccountsService } from './accounts.service.js';
 
 type AddressBody = {
   type: 'SHIPPING' | 'BILLING' | 'BOTH';

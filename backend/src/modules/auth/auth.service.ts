@@ -1,10 +1,10 @@
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { createRemoteJWKSet, jwtVerify, type JWTPayload } from 'jose';
-import { AppError } from '../../common/errors/app-error';
-import type { Environment } from '../../config/env';
-import { AuthRepository, type SessionSeed } from './auth.repository';
-import { AccessTokens } from './access-tokens';
-import { AuthEmailSender, type EmailSender } from './email.adapter';
+import { AppError } from '../../common/errors/app-error.js';
+import type { Environment } from '../../config/env.js';
+import { AuthRepository, type SessionSeed } from './auth.repository.js';
+import { AccessTokens } from './access-tokens.js';
+import { AuthEmailSender, type EmailSender } from './email.adapter.js';
 
 type AuthUser = {
   id: string;

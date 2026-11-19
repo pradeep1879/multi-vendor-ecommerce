@@ -4,12 +4,12 @@ import {
   authentication,
   getAuthContext,
   requireRole,
-} from '../../common/middleware/authentication';
-import { sendData } from '../../common/middleware/response';
-import { getValidatedRequest, validateRequest } from '../../common/validation/validate-request';
-import type { Environment } from '../../config/env';
-import { AuthService } from '../auth/auth.service';
-import { WishlistService } from './wishlist.service';
+} from '../../common/middleware/authentication.js';
+import { sendData } from '../../common/middleware/response.js';
+import { getValidatedRequest, validateRequest } from '../../common/validation/validate-request.js';
+import type { Environment } from '../../config/env.js';
+import { AuthService } from '../auth/auth.service.js';
+import { WishlistService } from './wishlist.service.js';
 
 export function createWishlistRouter(environment: Environment): Router {
   const router = express.Router();

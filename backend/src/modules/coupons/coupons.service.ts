@@ -1,5 +1,5 @@
-import { AppError } from '../../common/errors/app-error';
-import { CouponsRepository } from './coupons.repository';
+import { AppError } from '../../common/errors/app-error.js';
+import { CouponsRepository } from './coupons.repository.js';
 
 export class CouponsService {
   constructor(private readonly repository = new CouponsRepository()) {}

@@ -1,12 +1,12 @@
 import { createHash } from 'node:crypto';
-import { AppError } from '../../common/errors/app-error';
-import { getPrismaClient } from '../../infrastructure/database/client';
+import { AppError } from '../../common/errors/app-error.js';
+import { getPrismaClient } from '../../infrastructure/database/client.js';
 import type {
   PaymentGateway,
   GatewayPayment,
   GatewayPaymentWebhook,
   GatewayRefundWebhook,
-} from './payment-gateway';
+} from './payment-gateway.js';
 
 function refundCapacities(
   vendorOrders: Array<{

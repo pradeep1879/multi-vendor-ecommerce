@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ValidationError } from '../errors/app-error';
+import { ValidationError } from '../errors/app-error.js';
 
 const paginationSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),

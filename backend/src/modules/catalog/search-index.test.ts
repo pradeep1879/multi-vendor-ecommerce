@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
-import { SearchIndex } from './search-index';
+import { SearchIndex } from './search-index.js';
 
 let server: ReturnType<typeof Bun.serve>;
 let index: SearchIndex;

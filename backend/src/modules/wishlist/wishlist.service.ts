@@ -1,5 +1,5 @@
-import { AppError } from '../../common/errors/app-error';
-import { WishlistRepository } from './wishlist.repository';
+import { AppError } from '../../common/errors/app-error.js';
+import { WishlistRepository } from './wishlist.repository.js';
 
 export class WishlistService {
   constructor(private readonly repository = new WishlistRepository()) {}

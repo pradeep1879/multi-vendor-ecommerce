@@ -1,5 +1,5 @@
 import type { RequestHandler } from 'express';
-import { AppError } from '../errors/app-error';
+import { AppError } from '../errors/app-error.js';
 
 export function requireTrustedOrigin(origins: readonly string[]): RequestHandler {
   return (request, _response, next) => {

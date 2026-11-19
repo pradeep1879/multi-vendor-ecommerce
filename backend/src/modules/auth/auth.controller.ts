@@ -1,11 +1,11 @@
 import { parse, serialize } from 'cookie';
 import type { RequestHandler } from 'express';
-import { AppError } from '../../common/errors/app-error';
-import { sendData } from '../../common/middleware/response';
-import { getAuthContext } from '../../common/middleware/authentication';
-import { getValidatedRequest } from '../../common/validation/validate-request';
-import type { Environment } from '../../config/env';
-import type { AuthService } from './auth.service';
+import { AppError } from '../../common/errors/app-error.js';
+import { sendData } from '../../common/middleware/response.js';
+import { getAuthContext } from '../../common/middleware/authentication.js';
+import { getValidatedRequest } from '../../common/validation/validate-request.js';
+import type { Environment } from '../../config/env.js';
+import type { AuthService } from './auth.service.js';
 
 const REFRESH_COOKIE = 'marketplace_refresh';
 type AuthBody = { email: string; password: string; name?: string };
@@ -20,7 +20,7 @@ export function createAuthController(service: AuthService, environment: Environm
       serialize(REFRESH_COOKIE, token, {
         httpOnly: true,
         secure: environment.nodeEnv === 'production',
-        sameSite: 'strict',
+        sameSite: environment.nodeEnv === 'production' ? 'none' : 'strict',
         path: '/api/v1/auth',
         maxAge: environment.refreshTokenTtlDays * 24 * 60 * 60,
       }),
@@ -33,7 +33,7 @@ export function createAuthController(service: AuthService, environment: Environm
       serialize(REFRESH_COOKIE, '', {
         httpOnly: true,
         secure: environment.nodeEnv === 'production',
-        sameSite: 'strict',
+        sameSite: environment.nodeEnv === 'production' ? 'none' : 'strict',
         path: '/api/v1/auth',
         maxAge: 0,
         expires: new Date(0),

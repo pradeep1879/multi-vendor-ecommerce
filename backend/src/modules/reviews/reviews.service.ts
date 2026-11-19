@@ -1,5 +1,5 @@
-import { AppError } from '../../common/errors/app-error';
-import { ReviewsRepository } from './reviews.repository';
+import { AppError } from '../../common/errors/app-error.js';
+import { ReviewsRepository } from './reviews.repository.js';
 
 export class ReviewsService {
   constructor(private readonly repository = new ReviewsRepository()) {}

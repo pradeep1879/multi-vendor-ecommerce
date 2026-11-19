@@ -1,6 +1,6 @@
 import { createHmac } from 'node:crypto';
 import { describe, expect, test } from 'bun:test';
-import { TestPaymentGateway } from './payment-gateway';
+import { TestPaymentGateway } from './payment-gateway.js';
 
 describe('local test payment gateway', () => {
   test('requires a server signature and returns only the created order amount as captured', async () => {

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
-import { ValidationError } from '../errors/app-error';
-import { parsePagination, parseSort } from './pagination';
+import { ValidationError } from '../errors/app-error.js';
+import { parsePagination, parseSort } from './pagination.js';
 
 describe('pagination and sorting helpers', () => {
   test('uses bounded defaults and calculates offset', () => {

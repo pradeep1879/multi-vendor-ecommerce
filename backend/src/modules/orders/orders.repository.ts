@@ -1,7 +1,7 @@
 import { createHash, randomUUID } from 'node:crypto';
-import { AppError } from '../../common/errors/app-error';
-import { getPrismaClient } from '../../infrastructure/database/client';
-import { calculateCouponDiscount } from '../coupons/coupon-discount';
+import { AppError } from '../../common/errors/app-error.js';
+import { getPrismaClient } from '../../infrastructure/database/client.js';
+import { calculateCouponDiscount } from '../coupons/coupon-discount.js';
 
 const roundRate = (value: bigint, rate: number) => (value * BigInt(rate) + 5_000n) / 10_000n;
 class StockRace extends Error {}

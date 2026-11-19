@@ -4,13 +4,13 @@ import {
   authentication,
   getAuthContext,
   requireRole,
-} from '../../common/middleware/authentication';
-import { sendData } from '../../common/middleware/response';
-import { validateRequest, getValidatedRequest } from '../../common/validation/validate-request';
-import type { Environment } from '../../config/env';
-import { AuthService } from '../auth/auth.service';
-import { AccountsService } from '../accounts/accounts.service';
-import { AnalyticsRepository } from './analytics.repository';
+} from '../../common/middleware/authentication.js';
+import { sendData } from '../../common/middleware/response.js';
+import { validateRequest, getValidatedRequest } from '../../common/validation/validate-request.js';
+import type { Environment } from '../../config/env.js';
+import { AuthService } from '../auth/auth.service.js';
+import { AccountsService } from '../accounts/accounts.service.js';
+import { AnalyticsRepository } from './analytics.repository.js';
 
 const period = z
   .object({ from: z.iso.datetime(), to: z.iso.datetime() })

@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 // Resolve the backend env file from this module so startup works even when the
 // process is launched from the repository root or by an IDE task runner.
-loadDotenv({ path: fileURLToPath(new URL('../../.env', import.meta.url)), quiet: true });
+loadDotenv({ path: fileURLToPath(new URL('../../.env.js', import.meta.url)), quiet: true });
 
 const environmentSchema = z
   .object({

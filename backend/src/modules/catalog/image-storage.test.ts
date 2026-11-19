@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
-import { loadEnvironment } from '../../config/env';
-import { ImageStorage } from './image-storage';
+import { loadEnvironment } from '../../config/env.js';
+import { ImageStorage } from './image-storage.js';
 
 let server: ReturnType<typeof Bun.serve>;
 let endpoint = '';

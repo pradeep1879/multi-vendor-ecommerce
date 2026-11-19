@@ -2,10 +2,10 @@ import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
 import type { Server } from 'node:http';
 import { Router } from 'express';
 import { z } from 'zod';
-import { createApp } from './app';
-import { loadEnvironment } from './config/env';
-import { sendData } from './common/middleware/response';
-import { validateRequest } from './common/validation/validate-request';
+import { createApp } from './app.js';
+import { loadEnvironment } from './config/env.js';
+import { sendData } from './common/middleware/response.js';
+import { validateRequest } from './common/validation/validate-request.js';
 
 const router = Router();
 router.post(

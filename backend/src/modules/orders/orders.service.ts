@@ -1,6 +1,6 @@
-import { AppError } from '../../common/errors/app-error';
-import { OrdersRepository } from './orders.repository';
-import { createInvoicePdf } from './invoice-pdf';
+import { AppError } from '../../common/errors/app-error.js';
+import { OrdersRepository } from './orders.repository.js';
+import { createInvoicePdf } from './invoice-pdf.js';
 
 export class OrdersService {
   constructor(private readonly repository = new OrdersRepository()) {}

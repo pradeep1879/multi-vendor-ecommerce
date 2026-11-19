@@ -1,17 +1,17 @@
 import express, { type Router } from 'express';
 import { z } from 'zod';
-import { AppError } from '../../common/errors/app-error';
+import { AppError } from '../../common/errors/app-error.js';
 import {
   authentication,
   getAuthContext,
   requireRole,
-} from '../../common/middleware/authentication';
-import { sendData } from '../../common/middleware/response';
-import { getValidatedRequest, validateRequest } from '../../common/validation/validate-request';
-import type { Environment } from '../../config/env';
-import { AuthService } from '../auth/auth.service';
-import { AccountsService } from '../accounts/accounts.service';
-import { OrdersService } from './orders.service';
+} from '../../common/middleware/authentication.js';
+import { sendData } from '../../common/middleware/response.js';
+import { getValidatedRequest, validateRequest } from '../../common/validation/validate-request.js';
+import type { Environment } from '../../config/env.js';
+import { AuthService } from '../auth/auth.service.js';
+import { AccountsService } from '../accounts/accounts.service.js';
+import { OrdersService } from './orders.service.js';
 
 const params = z.object({ orderId: z.uuid() }).strict();
 const create = z

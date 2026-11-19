@@ -1,18 +1,18 @@
 import express, { type Router } from 'express';
 import { z } from 'zod';
-import { AppError } from '../../common/errors/app-error';
+import { AppError } from '../../common/errors/app-error.js';
 import {
   authentication,
   getAuthContext,
   requireRole,
-} from '../../common/middleware/authentication';
-import { sendData } from '../../common/middleware/response';
-import { getValidatedRequest, validateRequest } from '../../common/validation/validate-request';
-import type { Environment } from '../../config/env';
-import { AuthService } from '../auth/auth.service';
-import { PaymentsService } from '../payments/payments.service';
-import { AccountsService } from '../accounts/accounts.service';
-import { ReturnsService } from './returns.service';
+} from '../../common/middleware/authentication.js';
+import { sendData } from '../../common/middleware/response.js';
+import { getValidatedRequest, validateRequest } from '../../common/validation/validate-request.js';
+import type { Environment } from '../../config/env.js';
+import { AuthService } from '../auth/auth.service.js';
+import { PaymentsService } from '../payments/payments.service.js';
+import { AccountsService } from '../accounts/accounts.service.js';
+import { ReturnsService } from './returns.service.js';
 
 const orderParams = z.object({ orderId: z.uuid() }).strict();
 const returnParams = z.object({ returnId: z.uuid() }).strict();

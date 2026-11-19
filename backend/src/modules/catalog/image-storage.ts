@@ -7,8 +7,8 @@ import {
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { randomUUID } from 'node:crypto';
-import { AppError } from '../../common/errors/app-error';
-import type { Environment } from '../../config/env';
+import { AppError } from '../../common/errors/app-error.js';
+import type { Environment } from '../../config/env.js';
 
 const formats = {
   'image/jpeg': {

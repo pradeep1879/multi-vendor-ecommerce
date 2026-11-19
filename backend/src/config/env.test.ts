@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { loadEnvironment } from './env';
+import { loadEnvironment } from './env.js';
 
 describe('loadEnvironment', () => {
   test('uses safe local defaults', () => expect(loadEnvironment({}).port).toBe(3000));

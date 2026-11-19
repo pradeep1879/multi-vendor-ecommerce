@@ -1,8 +1,8 @@
 import type { RequestHandler } from 'express';
-import { getAuthContext } from '../../common/middleware/authentication';
-import { sendData } from '../../common/middleware/response';
-import { getValidatedRequest } from '../../common/validation/validate-request';
-import type { CatalogService } from './catalog.service';
+import { getAuthContext } from '../../common/middleware/authentication.js';
+import { sendData } from '../../common/middleware/response.js';
+import { getValidatedRequest } from '../../common/validation/validate-request.js';
+import type { CatalogService } from './catalog.service.js';
 
 export function createCatalogController(service: CatalogService) {
   const publicCategories: RequestHandler = async (_req, res) =>

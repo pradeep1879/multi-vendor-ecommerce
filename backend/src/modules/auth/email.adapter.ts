@@ -1,5 +1,5 @@
-import { AppError } from '../../common/errors/app-error';
-import type { Environment } from '../../config/env';
+import { AppError } from '../../common/errors/app-error.js';
+import type { Environment } from '../../config/env.js';
 
 export type OutboundEmail = {
   recipient: string;

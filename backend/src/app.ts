@@ -2,15 +2,15 @@ import cors from 'cors';
 import express, { type Express, type Router } from 'express';
 import { rateLimit } from 'express-rate-limit';
 import helmet from 'helmet';
-import type { Environment } from './config/env';
-import { loadEnvironment } from './config/env';
-import { AppError } from './common/errors/app-error';
-import { errorHandler, notFoundHandler } from './common/middleware/errors';
-import { requestIdMiddleware } from './common/middleware/request-id';
-import { requestLogger } from './common/middleware/request-logger';
-import { sendData } from './common/middleware/response';
-import { verifyDatabaseConnection } from './infrastructure/database/client';
-import { createApiRouter } from './routes';
+import type { Environment } from './config/env.js';
+import { loadEnvironment } from './config/env.js';
+import { AppError } from './common/errors/app-error.js';
+import { errorHandler, notFoundHandler } from './common/middleware/errors.js';
+import { requestIdMiddleware } from './common/middleware/request-id.js';
+import { requestLogger } from './common/middleware/request-logger.js';
+import { sendData } from './common/middleware/response.js';
+import { verifyDatabaseConnection } from './infrastructure/database/client.js';
+import { createApiRouter } from './routes.js';
 
 export function createApp(
   apiRouter: Router = express.Router(),

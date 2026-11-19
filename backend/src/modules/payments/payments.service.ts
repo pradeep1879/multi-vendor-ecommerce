@@ -1,7 +1,7 @@
-import { AppError } from '../../common/errors/app-error';
-import type { Environment } from '../../config/env';
-import { PaymentsRepository } from './payments.repository';
-import { createPaymentGateway } from './payment-gateway';
+import { AppError } from '../../common/errors/app-error.js';
+import type { Environment } from '../../config/env.js';
+import { PaymentsRepository } from './payments.repository.js';
+import { createPaymentGateway } from './payment-gateway.js';
 
 export class PaymentsService {
   private readonly repository: PaymentsRepository;

@@ -1,11 +1,11 @@
 import express, { type Router } from 'express';
 import { z } from 'zod';
-import { authentication, requireRole } from '../../common/middleware/authentication';
-import { validateRequest } from '../../common/validation/validate-request';
-import type { Environment } from '../../config/env';
-import { AuthService } from '../auth/auth.service';
-import { AccountsService } from './accounts.service';
-import { createAccountsController } from './accounts.controller';
+import { authentication, requireRole } from '../../common/middleware/authentication.js';
+import { validateRequest } from '../../common/validation/validate-request.js';
+import type { Environment } from '../../config/env.js';
+import { AuthService } from '../auth/auth.service.js';
+import { AccountsService } from './accounts.service.js';
+import { createAccountsController } from './accounts.controller.js';
 
 const idParams = (name: string) => z.object({ [name]: z.uuid() }).strict();
 const profileSchema = z

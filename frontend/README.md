@@ -11,4 +11,4 @@ bun run typecheck
 bun test
 ```
 
-`VITE_API_URL` defaults to `/api/v1`, which Vite proxies to the backend at `VITE_DEV_API_URL` (default `http://localhost:3000`). `VITE_GOOGLE_CLIENT_ID` is the public OAuth client ID; never put provider secrets in this application. Keep production values aligned with the deployed API and browser origin.
+Local development uses `VITE_API_URL=/api/v1`, which Vite proxies to `VITE_DEV_API_URL` (`http://localhost:3000` by default). Production builds use `frontend/.env.production` and point to the deployed API. Set or override `VITE_API_URL` in Vercel Project Settings → Environment Variables if the API URL changes; Vite embeds this public value at build time, so redeploy after changing it. The backend's `FRONTEND_URL` must be set to the deployed frontend origin for its exact CORS and trusted-origin checks. `VITE_GOOGLE_CLIENT_ID` is the public OAuth client ID; never put provider secrets in this application.

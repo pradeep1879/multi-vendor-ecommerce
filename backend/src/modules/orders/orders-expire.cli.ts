@@ -1,5 +1,5 @@
-import { disconnectDatabase } from '../../infrastructure/database/client';
-import { OrdersRepository } from './orders.repository';
+import { disconnectDatabase } from '../../infrastructure/database/client.js';
+import { OrdersRepository } from './orders.repository.js';
 
 try {
   const count = await new OrdersRepository().expireReservations();

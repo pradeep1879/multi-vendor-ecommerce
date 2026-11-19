@@ -1,8 +1,8 @@
 import type { Server } from 'node:http';
-import { app } from './app';
-import { loadEnvironment } from './config/env';
-import { disconnectDatabase } from './infrastructure/database/client';
-import { closeCartCaches } from './modules/cart/cart.cache';
+import { app } from './app.js';
+import { loadEnvironment } from './config/env.js';
+import { disconnectDatabase } from './infrastructure/database/client.js';
+import { closeCartCaches } from './modules/cart/cart.cache.js';
 
 let server: Server | undefined;
 

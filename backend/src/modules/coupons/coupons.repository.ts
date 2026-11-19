@@ -1,5 +1,5 @@
-import { getPrismaClient } from '../../infrastructure/database/client';
-import { calculateCouponDiscount, type CouponDefinition } from './coupon-discount';
+import { getPrismaClient } from '../../infrastructure/database/client.js';
+import { calculateCouponDiscount, type CouponDefinition } from './coupon-discount.js';
 
 export class CouponsRepository {
   private readonly prisma = getPrismaClient;

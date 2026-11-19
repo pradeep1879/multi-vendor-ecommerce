@@ -1,5 +1,5 @@
 import { createClient } from 'redis';
-import type { Environment } from '../../config/env';
+import type { Environment } from '../../config/env.js';
 
 export type CachedCart = {
   updatedAt: string;

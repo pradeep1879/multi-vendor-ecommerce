@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test } from 'bun:test';
-import { loadEnvironment } from '../../config/env';
-import { AuthEmailSender } from './email.adapter';
+import { loadEnvironment } from '../../config/env.js';
+import { AuthEmailSender } from './email.adapter.js';
 
 const originalFetch = globalThis.fetch;
 

@@ -1,5 +1,5 @@
-import { disconnectDatabase } from '../../infrastructure/database/client';
-import { PaymentsRepository } from './payments.repository';
+import { disconnectDatabase } from '../../infrastructure/database/client.js';
+import { PaymentsRepository } from './payments.repository.js';
 
 try {
   const report = await new PaymentsRepository().reconciliationReport();

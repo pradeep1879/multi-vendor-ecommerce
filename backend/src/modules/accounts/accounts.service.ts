@@ -1,9 +1,9 @@
-import { AppError } from '../../common/errors/app-error';
+import { AppError } from '../../common/errors/app-error.js';
 import {
   AccountsRepository,
   type AddressInput,
   type ApplicationInput,
-} from './accounts.repository';
+} from './accounts.repository.js';
 
 export class AccountsService {
   constructor(private readonly repository = new AccountsRepository()) {}

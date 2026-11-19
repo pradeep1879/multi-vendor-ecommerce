@@ -13,6 +13,9 @@ coverage/
 **/.env
 **/.env.*
 !**/.env.example
+# Frontend runtime endpoints are public build-time config, safe to version.
+!frontend/.env.development
+!frontend/.env.production
 
 # Logs, caches, and editor/OS files
 *.log

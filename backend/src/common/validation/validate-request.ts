@@ -1,6 +1,6 @@
 import type { RequestHandler, Response } from 'express';
 import { z } from 'zod';
-import { ValidationError } from '../errors/app-error';
+import { ValidationError } from '../errors/app-error.js';
 
 export type RequestSchemas = {
   params?: z.ZodType;

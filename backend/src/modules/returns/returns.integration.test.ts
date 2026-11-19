@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from '../../../generated/prisma/client';
-import { ReturnsRepository } from './returns.repository';
+import { PrismaClient } from '../../../generated/prisma/client.js';
+import { ReturnsRepository } from './returns.repository.js';
 
 const url = process.env.TEST_DATABASE_URL;
 if (url && !new URL(url).pathname.split('/').at(-1)?.endsWith('_test'))

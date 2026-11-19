@@ -1,6 +1,6 @@
 import type { RequestHandler } from 'express';
-import { AppError } from '../errors/app-error';
-import type { AuthService } from '../../modules/auth/auth.service';
+import { AppError } from '../errors/app-error.js';
+import type { AuthService } from '../../modules/auth/auth.service.js';
 
 export type AuthContext = {
   userId: string;

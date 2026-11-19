@@ -1,6 +1,6 @@
 import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
-import type { Environment } from '../../config/env';
-import { AppError } from '../../common/errors/app-error';
+import type { Environment } from '../../config/env.js';
+import { AppError } from '../../common/errors/app-error.js';
 
 export type GatewayPayment = {
   providerOrderId: string;

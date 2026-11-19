@@ -1,7 +1,7 @@
-import { AppError } from '../../common/errors/app-error';
-import { CartRepository } from './cart.repository';
-import { CouponsService } from '../coupons/coupons.service';
-import { calculateCouponDiscount } from '../coupons/coupon-discount';
+import { AppError } from '../../common/errors/app-error.js';
+import { CartRepository } from './cart.repository.js';
+import { CouponsService } from '../coupons/coupons.service.js';
+import { calculateCouponDiscount } from '../coupons/coupon-discount.js';
 
 const BASIS_POINTS = 10_000n;
 function applyRate(amount: bigint, rate: number): bigint {

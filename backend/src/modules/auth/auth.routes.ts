@@ -1,13 +1,13 @@
 import express, { type Router } from 'express';
 import { rateLimit } from 'express-rate-limit';
 import { z } from 'zod';
-import { authentication, getAuthContext } from '../../common/middleware/authentication';
-import { sendData } from '../../common/middleware/response';
-import { requireTrustedOrigin } from '../../common/middleware/trusted-origin';
-import { getValidatedRequest, validateRequest } from '../../common/validation/validate-request';
-import type { Environment } from '../../config/env';
-import { AuthService } from './auth.service';
-import { createAuthController } from './auth.controller';
+import { authentication, getAuthContext } from '../../common/middleware/authentication.js';
+import { sendData } from '../../common/middleware/response.js';
+import { requireTrustedOrigin } from '../../common/middleware/trusted-origin.js';
+import { getValidatedRequest, validateRequest } from '../../common/validation/validate-request.js';
+import type { Environment } from '../../config/env.js';
+import { AuthService } from './auth.service.js';
+import { createAuthController } from './auth.controller.js';
 
 const emailSchema = z.string().trim().email().max(320);
 const passwordSchema = z.string().min(12).max(128);

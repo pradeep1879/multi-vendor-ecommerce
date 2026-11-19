@@ -1,5 +1,5 @@
-import { AppError } from '../../common/errors/app-error';
-import { getPrismaClient } from '../../infrastructure/database/client';
+import { AppError } from '../../common/errors/app-error.js';
+import { getPrismaClient } from '../../infrastructure/database/client.js';
 
 export type ReturnTransition = 'UNDER_REVIEW' | 'APPROVED' | 'REJECTED' | 'IN_TRANSIT' | 'RECEIVED';
 

@@ -1,8 +1,8 @@
 import { describe, expect, test } from 'bun:test';
 import type { Request, Response } from 'express';
-import { AppError } from '../errors/app-error';
-import { authentication, requireRole } from './authentication';
-import type { AuthService } from '../../modules/auth/auth.service';
+import { AppError } from '../errors/app-error.js';
+import { authentication, requireRole } from './authentication.js';
+import type { AuthService } from '../../modules/auth/auth.service.js';
 
 describe('workspace route authorization', () => {
   const authorize = async (workspace: 'ADMIN' | 'VENDOR', token?: string) => {

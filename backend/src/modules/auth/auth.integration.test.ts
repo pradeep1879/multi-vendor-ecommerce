@@ -1,15 +1,15 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
 import type { Server } from 'node:http';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from '../../../generated/prisma/client';
-import { createApp } from '../../app';
-import { createAccountsRouter } from '../accounts/accounts.routes';
-import { authentication, requireRole } from '../../common/middleware/authentication';
-import { loadEnvironment } from '../../config/env';
-import { disconnectDatabase } from '../../infrastructure/database/client';
-import { AuthService, hashOpaqueToken } from './auth.service';
-import type { EmailSender, OutboundEmail } from './email.adapter';
-import { createAuthRouter } from './auth.routes';
+import { PrismaClient } from '../../../generated/prisma/client.js';
+import { createApp } from '../../app.js';
+import { createAccountsRouter } from '../accounts/accounts.routes.js';
+import { authentication, requireRole } from '../../common/middleware/authentication.js';
+import { loadEnvironment } from '../../config/env.js';
+import { disconnectDatabase } from '../../infrastructure/database/client.js';
+import { AuthService, hashOpaqueToken } from './auth.service.js';
+import type { EmailSender, OutboundEmail } from './email.adapter.js';
+import { createAuthRouter } from './auth.routes.js';
 import type { JWTPayload } from 'jose';
 
 const testDatabaseUrl = process.env.TEST_DATABASE_URL;

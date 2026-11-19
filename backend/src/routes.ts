@@ -1,17 +1,17 @@
 import express, { type Router } from 'express';
-import type { Environment } from './config/env';
-import { createAuthRouter } from './modules/auth/auth.routes';
-import { createAccountsRouter } from './modules/accounts/accounts.routes';
-import { createCatalogRouter } from './modules/catalog/catalog.routes';
-import { createCartRouter } from './modules/cart/cart.routes';
-import { createOrdersRouter } from './modules/orders/orders.routes';
-import { createCouponsRouter } from './modules/coupons/coupons.routes';
-import { createReviewsRouter } from './modules/reviews/reviews.routes';
-import { createPaymentsRouter } from './modules/payments/payments.routes';
-import { createAnalyticsRouter } from './modules/analytics/analytics.routes';
-import { createWishlistRouter } from './modules/wishlist/wishlist.routes';
-import { createReturnsRouter } from './modules/returns/returns.routes';
-import { createCustomerSettingsRouter } from './modules/accounts/customer-settings.routes';
+import type { Environment } from './config/env.js';
+import { createAuthRouter } from './modules/auth/auth.routes.js';
+import { createAccountsRouter } from './modules/accounts/accounts.routes.js';
+import { createCatalogRouter } from './modules/catalog/catalog.routes.js';
+import { createCartRouter } from './modules/cart/cart.routes.js';
+import { createOrdersRouter } from './modules/orders/orders.routes.js';
+import { createCouponsRouter } from './modules/coupons/coupons.routes.js';
+import { createReviewsRouter } from './modules/reviews/reviews.routes.js';
+import { createPaymentsRouter } from './modules/payments/payments.routes.js';
+import { createAnalyticsRouter } from './modules/analytics/analytics.routes.js';
+import { createWishlistRouter } from './modules/wishlist/wishlist.routes.js';
+import { createReturnsRouter } from './modules/returns/returns.routes.js';
+import { createCustomerSettingsRouter } from './modules/accounts/customer-settings.routes.js';
 
 export function createApiRouter(environment: Environment): Router {
   const router = express.Router();

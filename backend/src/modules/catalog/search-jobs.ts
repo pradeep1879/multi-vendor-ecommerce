@@ -1,6 +1,6 @@
-import { loadEnvironment } from '../../config/env';
-import { getPrismaClient } from '../../infrastructure/database/client';
-import { SearchIndex, type ProductDocument } from './search-index';
+import { loadEnvironment } from '../../config/env.js';
+import { getPrismaClient } from '../../infrastructure/database/client.js';
+import { SearchIndex, type ProductDocument } from './search-index.js';
 
 export function createProductDocument(product: {
   id: string;

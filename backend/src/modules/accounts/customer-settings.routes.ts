@@ -1,16 +1,16 @@
 import express, { type Router } from 'express';
 import { z } from 'zod';
-import { AppError } from '../../common/errors/app-error';
+import { AppError } from '../../common/errors/app-error.js';
 import {
   authentication,
   getAuthContext,
   requireRole,
-} from '../../common/middleware/authentication';
-import { sendData } from '../../common/middleware/response';
-import { getValidatedRequest, validateRequest } from '../../common/validation/validate-request';
-import type { Environment } from '../../config/env';
-import { getPrismaClient } from '../../infrastructure/database/client';
-import { AuthService } from '../auth/auth.service';
+} from '../../common/middleware/authentication.js';
+import { sendData } from '../../common/middleware/response.js';
+import { getValidatedRequest, validateRequest } from '../../common/validation/validate-request.js';
+import type { Environment } from '../../config/env.js';
+import { getPrismaClient } from '../../infrastructure/database/client.js';
+import { AuthService } from '../auth/auth.service.js';
 
 export function createCustomerSettingsRouter(environment: Environment): Router {
   const router = express.Router();

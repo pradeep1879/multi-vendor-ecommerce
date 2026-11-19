@@ -1,11 +1,11 @@
-import { AppError } from '../../common/errors/app-error';
-import { loadEnvironment, type Environment } from '../../config/env';
+import { AppError } from '../../common/errors/app-error.js';
+import { loadEnvironment, type Environment } from '../../config/env.js';
 import {
   CatalogRepository,
   type ProductCreateInput,
   type ProductUpdateInput,
-} from './catalog.repository';
-import { SearchIndex } from './search-index';
+} from './catalog.repository.js';
+import { SearchIndex } from './search-index.js';
 
 export class CatalogService {
   constructor(

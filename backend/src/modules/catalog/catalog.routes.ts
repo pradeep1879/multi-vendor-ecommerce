@@ -1,15 +1,15 @@
 import express, { type Router } from 'express';
 import { z } from 'zod';
-import { authentication, requireRole } from '../../common/middleware/authentication';
-import { getValidatedRequest, validateRequest } from '../../common/validation/validate-request';
-import type { Environment } from '../../config/env';
-import { AuthService } from '../auth/auth.service';
-import { CatalogService } from './catalog.service';
-import { createCatalogController } from './catalog.controller';
-import { ImageStorage, type ImageMime } from './image-storage';
-import { AppError } from '../../common/errors/app-error';
-import { getAuthContext } from '../../common/middleware/authentication';
-import { sendData } from '../../common/middleware/response';
+import { authentication, requireRole } from '../../common/middleware/authentication.js';
+import { getValidatedRequest, validateRequest } from '../../common/validation/validate-request.js';
+import type { Environment } from '../../config/env.js';
+import { AuthService } from '../auth/auth.service.js';
+import { CatalogService } from './catalog.service.js';
+import { createCatalogController } from './catalog.controller.js';
+import { ImageStorage, type ImageMime } from './image-storage.js';
+import { AppError } from '../../common/errors/app-error.js';
+import { getAuthContext } from '../../common/middleware/authentication.js';
+import { sendData } from '../../common/middleware/response.js';
 
 const params = (key: string) => z.object({ [key]: z.uuid() }).strict();
 const page = z
