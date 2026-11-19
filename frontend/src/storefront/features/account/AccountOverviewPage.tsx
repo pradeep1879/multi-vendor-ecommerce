@@ -82,7 +82,7 @@ export function AccountOverviewPage() {
             <Panel className="mt-5">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <p className="text-sm uppercase tracking-[.16em] text-store-muted">
+                  <p className="text-sm  tracking-[.16em] text-store-muted">
                     Your latest active order
                   </p>
                   <h3 className="mt-1 font-store text-2xl">{query.data.activeOrder.number}</h3>
@@ -118,7 +118,7 @@ export function AccountOverviewPage() {
             <Panel>
               <div className="mb-5 flex items-center justify-between">
                 <div>
-                  <p className="text-sm uppercase tracking-[.16em] text-store-muted">
+                  <p className="text-sm  tracking-[.16em] text-store-muted">
                     Your latest activity
                   </p>
                   <h3 className="mt-1 font-store text-2xl font-normal">Recent orders</h3>
@@ -167,7 +167,7 @@ export function AccountOverviewPage() {
             </Panel>
             <div className="space-y-5">
               <Panel>
-                <p className="text-sm uppercase tracking-[.16em] text-store-muted">
+                <p className="text-sm  tracking-[.16em] text-store-muted">
                   Saved for later
                 </p>
                 <h3 className="mt-1 font-store text-2xl font-normal">Your wishlist</h3>
@@ -187,7 +187,7 @@ export function AccountOverviewPage() {
               <Panel>
                 <div className="flex items-center gap-2">
                   <MapPin size={15} className="text-[#777d68]" />
-                  <p className="text-sm uppercase tracking-[.16em] text-store-muted">
+                  <p className="text-sm  tracking-[.16em] text-store-muted">
                     Delivery details
                   </p>
                 </div>
@@ -222,7 +222,7 @@ export function AccountOverviewPage() {
             </div>
           </div>
           <Panel className="mt-5">
-            <p className="text-sm uppercase tracking-[.16em] text-store-muted">Account shortcuts</p>
+            <p className="text-sm  tracking-[.16em] text-store-muted">Account shortcuts</p>
             <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
               {[
                 ['Profile', '/account/profile'],

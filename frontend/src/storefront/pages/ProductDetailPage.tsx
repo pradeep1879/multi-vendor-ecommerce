@@ -61,7 +61,7 @@ function ProductContent({ product }: { product: CatalogProduct }) {
   );
   if (!gallery.length && product.image) gallery.push({ url: product.image, alt: product.name });
   useEffect(() => {
-    document.title = `${product.name} | Maison Beauté`;
+    document.title = `${product.name} | Aster Market`;
   }, [product.name]);
   return (
     <>

@@ -41,7 +41,7 @@
   background: var(--login-accent);
   color: white;
   font:
-    800 20px Manrope,
+    800 20px 'DM Sans',
     sans-serif;
 }
 .workspace-login-brand b,
@@ -50,7 +50,7 @@
 }
 .workspace-login-brand b {
   font:
-    700 14px Manrope,
+    700 14px 'DM Sans',
     sans-serif;
 }
 .workspace-login-brand small {
@@ -58,7 +58,7 @@
   color: #97a1af;
   font-size: 8px;
   font-weight: 700;
-  letter-spacing: 1.3px;
+  letter-spacing: 0.2px;
 }
 .workspace-login-store {
   display: flex;
@@ -90,12 +90,12 @@
   color: var(--login-accent);
   font-size: 9px;
   font-weight: 700;
-  letter-spacing: 1.5px;
+  letter-spacing: 0.25px;
 }
 .workspace-login-intro h1 {
   margin: 0;
   font:
-    500 clamp(38px, 5vw, 62px)/1.08 Manrope,
+    500 clamp(38px, 5vw, 62px)/1.08 'DM Sans',
     sans-serif;
   letter-spacing: -2.4px;
 }
@@ -167,12 +167,12 @@
   color: var(--login-accent);
   font-size: 9px;
   font-weight: 700;
-  letter-spacing: 1.4px;
+  letter-spacing: 0.25px;
 }
 .workspace-login-card h2 {
   margin: 7px 0 0;
   font:
-    700 22px Manrope,
+    700 22px 'DM Sans',
     sans-serif;
   letter-spacing: -0.7px;
 }

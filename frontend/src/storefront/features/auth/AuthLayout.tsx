@@ -4,7 +4,7 @@ import { StoreShell } from '../../components/storefront/StoreShell';
 
 export function AuthLayout({
   title,
-  eyebrow = 'A GOOD PLACE TO BEGIN',
+  eyebrow = 'A good place to begin',
   description,
   className = '',
   children,
@@ -20,7 +20,7 @@ export function AuthLayout({
     return (
       <main className="account-page auth-page">
         <Link to="/" className="auth-wordmark">
-          maison <i>beauté</i>
+          aster <i>market</i>
         </Link>
         <span className="eyebrow">{eyebrow}</span>
         <h1>{title}</h1>

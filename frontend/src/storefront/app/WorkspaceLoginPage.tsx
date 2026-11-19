@@ -97,10 +97,10 @@ function WorkspaceLoginPage({ role }: { role: WorkspaceRole }) {
     >
       <header className="workspace-login-header">
         <Link to="/" className="workspace-login-brand">
-          <span className="workspace-login-mark">M</span>
+          <span className="workspace-login-mark">A</span>
           <span>
-            <b>Maison Beauté</b>
-            <small>COMMERCE WORKSPACE</small>
+            <b>Aster Market</b>
+            <small>Commerce workspace</small>
           </span>
         </Link>
         <Link to="/" className="workspace-login-store">
@@ -110,7 +110,7 @@ function WorkspaceLoginPage({ role }: { role: WorkspaceRole }) {
       <section className="workspace-login-layout">
         <div className="workspace-login-intro">
           <span className="workspace-login-eyebrow">
-            {admin ? 'ADMINISTRATOR ACCESS' : 'VENDOR ACCESS'}
+            {admin ? 'Administrator access' : 'Vendor access'}
           </span>
           <h1>
             {admin ? (
@@ -133,7 +133,7 @@ function WorkspaceLoginPage({ role }: { role: WorkspaceRole }) {
           </h1>
           <p>
             {admin
-              ? 'Review marketplace activity and keep every part of Maison Beauté running smoothly.'
+              ? 'Review marketplace activity and keep every part of Aster Market running smoothly.'
               : 'Keep your catalog, orders, stock and store details in one calm workspace.'}
           </p>
           <div className="workspace-login-perks">
@@ -174,7 +174,7 @@ function WorkspaceLoginPage({ role }: { role: WorkspaceRole }) {
             {admin ? <ShieldCheck size={20} /> : <Store size={20} />}
           </div>
           <div className="workspace-login-card-kicker">
-            {admin ? 'ADMIN CONSOLE' : 'VENDOR STUDIO'}
+            {admin ? 'Admin console' : 'Vendor studio'}
           </div>
           <h2 id="workspace-login-title">Sign in to continue</h2>
           <p className="workspace-login-card-copy">
@@ -226,12 +226,12 @@ function WorkspaceLoginPage({ role }: { role: WorkspaceRole }) {
             </button>
           </form>
           <div className="workspace-login-footnote">
-            Access is limited to accounts with the {admin ? 'ADMIN' : 'VENDOR'} role.
+            Access is limited to accounts with the {admin ? 'admin' : 'vendor'} role.
           </div>
         </section>
       </section>
       <footer className="workspace-login-footer">
-        <span>© {new Date().getFullYear()} Maison Beauté</span>
+        <span>© {new Date().getFullYear()} Aster Market</span>
         <span>Secure role-based access</span>
       </footer>
     </main>

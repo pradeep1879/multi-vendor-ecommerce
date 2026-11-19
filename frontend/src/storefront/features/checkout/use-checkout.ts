@@ -206,7 +206,7 @@ export function useCheckout() {
       key: order.keyId,
       amount: order.amountPaise,
       currency: order.currency,
-      name: 'Maison Beauté',
+      name: 'Aster Market',
       description: `Order ${order.orderNumber}`,
       order_id: order.razorpayOrderId,
       prefill: {

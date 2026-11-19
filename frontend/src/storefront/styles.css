@@ -2042,7 +2042,7 @@ button {
   gap: 15px;
   color: #999;
   font-size: 12px;
-  text-transform: uppercase;
+  text-transform: none;
   letter-spacing: 0.04em;
   margin: 28px 0 70px;
 }
@@ -2129,7 +2129,7 @@ button {
 .cart-totals h2 {
   font: 400 24px var(--serif);
   margin: 0 0 22px;
-  text-transform: uppercase;
+  text-transform: none;
 }
 .cart-totals > div {
   display: flex;

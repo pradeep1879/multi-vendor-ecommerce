@@ -32,8 +32,8 @@ export function Header() {
           <Wordmark />
           <DesktopNavigation categories={categories.data ?? []} />
           <div className="store-header-actions">
-            <Link to="/sell-with-us" className="text-xs underline underline-offset-4">
-              Sell with us
+            <Link to="/sell-with-us" className="store-seller-link">
+              Become a seller <span aria-hidden="true">↗</span>
             </Link>
             <Link to="/account" className="store-icon" aria-label="My account">
               <UserRound size={23} strokeWidth={1.25} />

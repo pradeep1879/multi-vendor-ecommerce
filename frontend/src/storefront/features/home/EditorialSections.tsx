@@ -5,22 +5,22 @@ export function Story() {
   return (
     <section className="store-story store-container store-section" id="journal">
       <img
-        src="https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?auto=format&fit=crop&w=1100&q=80"
-        alt="A quiet skincare ritual in a natural setting"
+        src="https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?auto=format&fit=crop&w=1400&q=88"
+        alt="Thoughtfully arranged everyday objects in a warm, natural interior"
         loading="lazy"
       />
       <div>
-        <p className="eyebrow">ABOUT MAISON BEAUTÉ</p>
-        <h2>Less, but more lovely.</h2>
+        <p className="eyebrow">About Aster Market</p>
+        <h2>Everyday finds, chosen with care.</h2>
         <p>
-          We believe your routine should feel less like another thing to get right, and more like a
-          small kindness you give yourself.
+          A good marketplace makes it easier to find the things that make home, work, and daily life
+          feel a little more like yours.
         </p>
         <p>
-          Every formula is made with intention: a few thoughtful ingredients, a sensorial texture,
-          and nothing you don't need.
+          We bring independent sellers and useful, well-made products together, so you can spend less
+          time searching and more time enjoying what you find.
         </p>
-        <span className="store-story-signature">With care, Maison Beauté</span>
+        <span className="store-story-signature">With care, Aster Market</span>
       </div>
     </section>
   );

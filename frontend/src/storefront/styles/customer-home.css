@@ -59,7 +59,7 @@
   margin: 0 0 26px;
   font-size: 13px;
   font-weight: 600;
-  letter-spacing: 0.24em;
+  letter-spacing: 0.08em;
 }
 .customer-store .store-hero-eyebrow::before {
   content: '';

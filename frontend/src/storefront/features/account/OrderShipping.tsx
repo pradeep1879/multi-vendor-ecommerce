@@ -8,7 +8,7 @@ export function OrderShipping({ order }: { order: AccountOrder }) {
       <h3 className="font-store text-xl">Shipping and payment</h3>
       <div className="mt-4 grid gap-5 sm:grid-cols-2">
         <div>
-          <p className="text-sm uppercase tracking-wider text-store-muted">Delivering to</p>
+          <p className="text-sm  tracking-wider text-store-muted">Delivering to</p>
           <p className="mt-2 text-sm leading-5">
             {
               (
@@ -41,7 +41,7 @@ export function OrderShipping({ order }: { order: AccountOrder }) {
           </p>
         </div>
         <div>
-          <p className="text-sm uppercase tracking-wider text-store-muted">Shipment</p>
+          <p className="text-sm  tracking-wider text-store-muted">Shipment</p>
           <p className="mt-2 text-sm">{order.shipment?.courier ?? 'Courier not assigned'}</p>
           <p className="mt-1 text-sm text-store-muted">
             {order.shipment?.trackingNumber

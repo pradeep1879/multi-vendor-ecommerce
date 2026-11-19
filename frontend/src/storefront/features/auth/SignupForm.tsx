@@ -69,7 +69,7 @@ export function SignupForm() {
       }
       description="A little place for your favourite rituals."
     >
-      <p className="signup-eyebrow">MAISON BEAUTÉ <span>·</span> YOUR ACCOUNT</p>
+      <p className="signup-eyebrow">Aster Market <span>·</span> Your account</p>
       <form onSubmit={submit} className="auth-form signup-form">
         <div className="signup-name">
           <label className="auth-field">

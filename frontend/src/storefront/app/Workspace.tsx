@@ -118,11 +118,7 @@ export function WorkspaceGate({ role }: { role: Role }) {
     }
   }, [activateRole, auth.data, role]);
   if (auth.isLoading)
-    return (
-      <div className="workspace-loading" role="status">
-        <span className="workspace-spinner" /> Loading your workspace…
-      </div>
-    );
+    return <WorkspaceLoading role={role} phase="session" />;
   if (!auth.data)
     return (
       <Navigate
@@ -138,13 +134,63 @@ export function WorkspaceGate({ role }: { role: Role }) {
   if (auth.data.role !== role) {
     if (activateRole.isError)
       return <Navigate to={workspaceHome(auth.data.role, auth.data.vendorStatus)} replace />;
-    return (
-      <div className="workspace-loading" role="status">
-        <span className="workspace-spinner" /> Activating your workspace…
-      </div>
-    );
+    return <WorkspaceLoading role={role} phase="activation" />;
   }
   return <Workspace role={role} />;
+}
+
+function WorkspaceLoading({
+  role,
+  phase,
+}: {
+  role: Role;
+  phase: 'session' | 'activation';
+}) {
+  const [takingLong, setTakingLong] = useState(false);
+  const admin = role === 'ADMIN';
+  useEffect(() => {
+    const timer = window.setTimeout(() => setTakingLong(true), 10_000);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  return (
+    <main className={`workspace-loading workspace-loading-${role.toLowerCase()}`}>
+      <section className="workspace-loading-card" role="status" aria-live="polite">
+        <Link to="/" className="workspace-loading-brand" aria-label="Aster Market home">
+          <span className="workspace-loading-mark">A</span>
+          <span>
+            <b>Aster Market</b>
+            <small>{admin ? 'Admin workspace' : 'Vendor studio'}</small>
+          </span>
+        </Link>
+        <span className="workspace-loading-orbit" aria-hidden="true" />
+        <h1>
+          {phase === 'session'
+            ? `Preparing your ${admin ? 'admin' : 'vendor'} workspace`
+            : 'Switching workspace'}
+        </h1>
+        <p>
+          {phase === 'session'
+            ? 'Checking your secure session and access.'
+            : 'Applying your role and loading the right tools.'}
+        </p>
+        <div className="workspace-loading-progress" aria-hidden="true">
+          <span />
+        </div>
+        {takingLong && (
+          <div className="workspace-loading-recovery">
+            <span>This is taking longer than usual.</span>
+            <button type="button" onClick={() => window.location.reload()}>
+              Try again
+            </button>
+          </div>
+        )}
+        <Link className="workspace-loading-home" to="/">
+          Return to the marketplace
+        </Link>
+      </section>
+    </main>
+  );
 }
 
 function Workspace({ role }: { role: Role }) {
@@ -217,10 +263,10 @@ function Workspace({ role }: { role: Role }) {
     <div className="workspace-app">
       <aside className={`workspace-sidebar ${mobileOpen ? 'is-open' : ''}`}>
         <Link className="workspace-brand" to={dashboardPath} onClick={() => setMobileOpen(false)}>
-          <span className="brand-mark">M</span>
+          <span className="brand-mark">A</span>
           <span>
-            <b>Maison Beauté</b>
-            <small>{admin ? 'ADMIN CONSOLE' : 'VENDOR STUDIO'}</small>
+            <b>Aster Market</b>
+            <small>{admin ? 'Admin console' : 'Vendor studio'}</small>
           </span>
         </Link>
         <button
@@ -230,13 +276,13 @@ function Workspace({ role }: { role: Role }) {
         >
           <X size={19} />
         </button>
-        <div className="workspace-nav-label">MAIN MENU</div>
+        <div className="workspace-nav-label">Main menu</div>
         <nav>
           {items.map((item) => (
             <div key={item.path}>
               {item.group && (
                 <div className="workspace-nav-label workspace-nav-group">
-                  {item.group.toUpperCase()}
+                  {item.group}
                 </div>
               )}
               <Link
@@ -309,7 +355,7 @@ function Workspace({ role }: { role: Role }) {
           <div className="workspace-page-heading">
             <div>
               <div className="workspace-eyebrow">
-                {admin ? 'MAISON BEAUTÉ · ADMINISTRATION' : 'MAISON BEAUTÉ · VENDOR PORTAL'}
+                {admin ? 'Aster Market · administration' : 'Aster Market · vendor portal'}
               </div>
               <h1>{heading(endpoint, admin)}</h1>
               <p>{subheading(endpoint, admin)}</p>
@@ -348,7 +394,7 @@ function Workspace({ role }: { role: Role }) {
           )}
         </main>
         <footer className="workspace-footer">
-          <span>© {new Date().getFullYear()} Maison Beauté</span>
+          <span>© {new Date().getFullYear()} Aster Market</span>
           <span>Data shown from your commerce account</span>
         </footer>
       </div>
@@ -509,7 +555,7 @@ function Overview({
             <ChartNoAxesCombined />
           </div>
           <div className="workspace-eyebrow">
-            {admin ? 'MARKETPLACE ACTIVITY' : 'STORE PERFORMANCE'}
+            {admin ? 'Marketplace activity' : 'Store performance'}
           </div>
           <h2>{admin ? 'Business at a glance' : 'Your store at a glance'}</h2>
           {loading ? (

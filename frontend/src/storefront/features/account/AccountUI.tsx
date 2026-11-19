@@ -47,7 +47,7 @@ export function PageTitle({
   return (
     <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
       <div>
-        <p className="text-sm font-semibold uppercase tracking-[.18em] text-store-muted">
+        <p className="text-sm font-semibold  tracking-[.18em] text-store-muted">
           {eyebrow}
         </p>
         <h2 className="mt-2 font-store text-3xl font-normal tracking-tight sm:text-3xl">{title}</h2>

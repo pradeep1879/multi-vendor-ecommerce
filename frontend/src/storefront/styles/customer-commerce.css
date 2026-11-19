@@ -219,7 +219,7 @@
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.07em;
-  text-transform: uppercase;
+  text-transform: none;
 }
 .store-checkout-contact h2 {
   flex-shrink: 0;

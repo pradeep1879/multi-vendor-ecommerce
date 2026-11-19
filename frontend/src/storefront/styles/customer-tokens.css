@@ -1,6 +1,6 @@
 /* Customer tokens are scoped so the administration workspace retains its design. */
 .customer-store {
-  --store-font: 'Assistant', Arial, sans-serif;
+  --store-font: 'DM Sans', Arial, sans-serif;
   --store-ink: #121212;
   --store-muted: #666;
   --store-line: #dedede;

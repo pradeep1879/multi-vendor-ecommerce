@@ -196,7 +196,7 @@ export function AddressesPage() {
             <Panel key={address.id}>
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <span className="text-sm uppercase tracking-wider text-store-muted">
+                  <span className="text-sm  tracking-wider text-store-muted">
                     {address.label}
                   </span>
                   {address.isDefault && (

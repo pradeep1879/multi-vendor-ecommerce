@@ -34,7 +34,7 @@ export function AuthError({ children }: { children: string }) {
 export function SocialDivider() {
   return (
     <div className="auth-divider">
-      <span>OR</span>
+      <span>or</span>
     </div>
   );
 }

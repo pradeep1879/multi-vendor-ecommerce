@@ -8,7 +8,7 @@ import './role-selection.css';
 const roleDetails: Record<AuthRole, { title: string; description: string; icon: typeof Store }> = {
   CUSTOMER: {
     title: 'Customer storefront',
-    description: 'Browse the collection, manage your orders and saved items.',
+    description: 'Explore the marketplace, manage your orders and saved items.',
     icon: ShoppingBag,
   },
   VENDOR: {
@@ -61,7 +61,7 @@ export function RoleSelectionPage() {
   return (
     <main className="role-selection-page">
       <section className="role-selection-card" aria-labelledby="role-selection-title">
-        <span className="role-selection-eyebrow">MAISON BEAUTÉ · YOUR ACCOUNT</span>
+        <span className="role-selection-eyebrow">Aster Market · your account</span>
         <h1 id="role-selection-title">Where would you like to go?</h1>
         <p>You can switch between these workspaces whenever you need.</p>
         <div className="role-selection-options">
@@ -113,7 +113,7 @@ export function VendorApplicationStatusPage() {
   return (
     <main className="role-selection-page">
       <section className="role-selection-card role-selection-status-card">
-        <span className="role-selection-eyebrow">VENDOR APPLICATION · {status}</span>
+        <span className="role-selection-eyebrow">Vendor application · {status.toLowerCase()}</span>
         <h1>
           {status === 'REJECTED'
             ? 'Your application needs an update.'

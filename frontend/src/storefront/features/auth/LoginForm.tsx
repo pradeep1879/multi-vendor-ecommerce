@@ -92,16 +92,16 @@ export function LoginForm({ currentUser }: { currentUser?: AuthUser }) {
           Welcome <em>back.</em>
         </>
       }
-      eyebrow={admin ? 'STAFF SIGN IN' : vendorSignIn ? 'VENDOR SIGN IN' : undefined}
+      eyebrow={admin ? 'Staff sign in' : vendorSignIn ? 'Vendor sign in' : undefined}
       description={
         admin
           ? 'Use your administrator account to continue.'
           : vendorSignIn
             ? 'Use your approved vendor account to manage your store.'
-            : 'Sign in to see your orders, saved rituals and little favourites.'
+            : 'Sign in to see your orders and saved items.'
       }
     >
-      {!admin && <p className="login-eyebrow">MAISON BEAUTÉ <span>·</span> YOUR ACCOUNT</p>}
+      {!admin && <p className="login-eyebrow">Aster Market <span>·</span> Your account</p>}
       {admin && currentUser?.role === 'CUSTOMER' && (
         <div className="auth-hint" role="status">
           Signed in as {currentUser.email}. Enter an administrator account to switch.

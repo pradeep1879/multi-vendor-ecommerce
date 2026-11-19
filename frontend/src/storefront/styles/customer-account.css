@@ -52,7 +52,7 @@
   font-weight: 600;
   letter-spacing: 0.14em;
   line-height: 1.4;
-  text-transform: uppercase;
+  text-transform: none;
 }
 .store-account-layout > aside a {
   display: flex;
@@ -220,11 +220,19 @@
   background: #fff;
   box-shadow: 0 16px 44px rgb(38 36 30 / 7%);
 }
+.customer-store .store-auth-login {
+  width: min(calc(100% - 32px), 560px);
+  max-width: 560px;
+  padding: 32px clamp(24px, 4vw, 40px) 28px;
+}
 .customer-store .store-auth-signup h1,
 .customer-store .store-auth-login h1 {
   margin-bottom: 10px;
   font-size: clamp(34px, 4vw, 42px);
   line-height: 1.12;
+}
+.customer-store .store-auth-login h1 {
+  font-size: clamp(30px, 3vw, 36px);
 }
 .customer-store .store-auth-signup .store-auth-description,
 .customer-store .store-auth-login .store-auth-description {
@@ -257,14 +265,23 @@
   color: #b18a70;
 }
 .customer-store .store-auth-login .auth-form {
-  gap: 14px;
+  gap: 12px;
+}
+.customer-store .store-auth-login .auth-field {
+  gap: 6px;
+  font-size: 14px;
+}
+.customer-store .store-auth-login .auth-field input {
+  min-height: 46px;
+  height: 46px;
+  font-size: 15px;
 }
 .customer-store .store-auth-login .auth-forgot {
   margin-top: -4px;
   text-align: right;
 }
 .customer-store .store-auth-login .auth-form > .button {
-  min-height: 48px;
+  min-height: 46px;
 }
 .customer-store .signup-form {
   grid-template-columns: repeat(2, minmax(0, 1fr));

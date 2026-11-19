@@ -60,7 +60,7 @@ describe('customer storefront API contract adapters', () => {
                 name: 'Calm Cream',
                 slug: 'calm-cream',
                 status: 'ACTIVE',
-                brand: { name: 'Maison' },
+                brand: { name: 'Aster Market' },
                 images: [],
                 variants: [],
               },

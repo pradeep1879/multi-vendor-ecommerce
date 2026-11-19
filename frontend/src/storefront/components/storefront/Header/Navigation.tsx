@@ -97,6 +97,9 @@ export function MobileNavigation({
         <Link to="/wishlist" onClick={onClose}>
           Wishlist
         </Link>
+        <Link to="/sell-with-us" onClick={onClose}>
+          Become a seller
+        </Link>
         <Link to="/account" onClick={onClose}>
           My account
         </Link>

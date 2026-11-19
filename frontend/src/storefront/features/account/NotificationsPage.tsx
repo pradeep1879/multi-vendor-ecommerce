@@ -25,7 +25,7 @@ export function NotificationsPage() {
   return (
     <State loading={query.isLoading} error={query.isError} retry={() => void query.refetch()}>
       <PageTitle
-        eyebrow="A note from the Maison"
+        eyebrow="A note from Aster Market"
         title="Notifications"
         description="Order and account updates, all in one place."
         action={
@@ -46,7 +46,7 @@ export function NotificationsPage() {
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-[9px] uppercase tracking-wider text-store-muted">
+                    <span className="text-[9px]  tracking-wider text-store-muted">
                       {readable(item.type)}
                     </span>
                     {!item.readAt && (

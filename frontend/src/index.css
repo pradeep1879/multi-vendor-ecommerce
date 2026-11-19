@@ -2147,7 +2147,7 @@ td {
 }
 .product-summary .eyebrow {
   margin-bottom: 8px;
-  text-transform: uppercase;
+  text-transform: none;
 }
 .product-summary h2 {
   margin: 0 0 10px;

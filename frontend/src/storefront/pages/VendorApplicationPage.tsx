@@ -31,9 +31,9 @@ export function VendorApplicationPage() {
     <main className="seller-application">
       <div className="seller-application-inner">
         <Link to="/" className="seller-back">
-          ← Back to Maison Beauté
+          ← Back to Aster Market
         </Link>
-        <span className="seller-eyebrow">MAISON BEAUTÉ MARKETPLACE</span>
+        <span className="seller-eyebrow">Aster Market · seller application</span>
         <h1>Make room for your good things.</h1>
         <p className="seller-intro">
           Tell us about your business. Our team will review your application before your store can

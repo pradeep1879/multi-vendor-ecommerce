@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 
 const heroPoster =
-  'https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?auto=format&fit=crop&w=1920&q=85';
+  'https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?auto=format&fit=crop&w=2200&q=90';
 
 export function Hero() {
   return (
@@ -23,18 +23,18 @@ export function Hero() {
 
       <div className="store-hero-content store-container">
         <div className="store-hero-copy">
-          <p className="store-hero-eyebrow">THE EVERYDAY EDIT</p>
-          <h1 id="home-title">Beauty, at your own pace.</h1>
+          <p className="store-hero-eyebrow">Good things, thoughtfully found</p>
+          <h1 id="home-title">Find more of what you love.</h1>
           <p className="store-hero-description">
-            Your moment to explore makeup, skincare and fragrance that feel like you.
+            Explore considered finds for your home, your day, and everything in between.
           </p>
           <Link to="/products" className="button store-hero-cta">
-            Shop the collection <ArrowRight size={20} aria-hidden="true" />
+            Explore the marketplace <ArrowRight size={20} aria-hidden="true" />
           </Link>
         </div>
       </div>
       <span className="store-hero-index" aria-hidden="true">
-        01 / THE COLLECTION
+        01 / Curated finds
       </span>
     </section>
   );

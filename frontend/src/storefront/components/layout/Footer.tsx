@@ -16,7 +16,7 @@ export function Footer() {
                 <Link to="/search">Search</Link>
               </li>
               <li>
-                <a href="/#journal">About Maison Beauté</a>
+                <a href="/#journal">About Aster Market</a>
               </li>
               <li>
                 <Link to="/products">Shop all</Link>
@@ -50,7 +50,7 @@ export function Footer() {
           <section className="store-footer-brand">
             <Wordmark />
             <p>
-              A softer kind of beauty.
+              Thoughtful finds for everyday living.
               <br />
               Made with care, for real life.
             </p>
@@ -60,7 +60,7 @@ export function Footer() {
           </section>
         </div>
         <div className="store-footer-bottom">
-          <span>© {new Date().getFullYear()} Maison Beauté</span>
+          <span>© {new Date().getFullYear()} Aster Market</span>
           <span>INR ₹ · India</span>
           <Link to="/account/preferences">Email preferences</Link>
           <Link to="/account/security">Account security</Link>

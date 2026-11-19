@@ -44,9 +44,36 @@
 .customer-store .store-wordmark > span {
   display: block;
   font-family: var(--store-font);
-  letter-spacing: 0.25em;
-  font-size: 8px;
+  letter-spacing: 0.03em;
+  font-size: 9px;
   margin-top: 8px;
+}
+.customer-store .store-seller-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 13px;
+  border: 1px solid var(--store-line);
+  border-radius: 999px;
+  color: var(--store-ink);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+.customer-store .store-seller-link:hover {
+  border-color: var(--store-ink);
+  background: var(--store-ink);
+  color: #fff;
+  text-decoration: none;
+}
+.customer-store .store-seller-link span {
+  font-size: 14px;
+  transition: transform 180ms ease;
+}
+.customer-store .store-seller-link:hover span {
+  transform: translate(2px, -2px);
 }
 .customer-store .store-desktop-nav {
   display: flex;

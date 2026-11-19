@@ -20,7 +20,7 @@ export function PreferencesPage() {
       'Receipts, fulfillment, and delivery updates are transactional and always remain on.',
     ],
     ['promotionalEmail', 'Promotional emails', 'Product launches, offers, and seasonal notes.'],
-    ['recommendationsEmail', 'Product recommendations', 'Beauty picks based on your interests.'],
+    ['recommendationsEmail', 'Product recommendations', 'New finds selected for your interests.'],
   ];
   return (
     <State loading={query.isLoading} error={query.isError} retry={() => void query.refetch()}>
