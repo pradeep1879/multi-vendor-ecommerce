@@ -20,18 +20,20 @@ import './storefront/styles/customer-account.css';
 
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
-    onError: (error) =>
+    onError: (error) => {
+      if (isExpectedSessionError(error)) return;
       showToast(
         getErrorMessage(
           error,
           'We couldn’t load that information. Check your connection and try again.',
         ),
         'error',
-      ),
+      );
+    },
   }),
   mutationCache: new MutationCache({
     onError: (error, _variables, _result, mutation) => {
-      if (!mutation.options.onError)
+      if (!mutation.options.onError && !isExpectedSessionError(error))
         showToast(
           getErrorMessage(error, 'That action couldn’t be completed. Please try again.'),
           'error',
@@ -40,6 +42,17 @@ const queryClient = new QueryClient({
   }),
   defaultOptions: { queries: { staleTime: 60_000, retry: 1, refetchOnWindowFocus: false } },
 });
+
+function isExpectedSessionError(error: unknown): boolean {
+  if (typeof error !== 'object' || error === null || !('response' in error)) return false;
+  const response = (error as {
+    response?: { status?: number; data?: { error?: { code?: string } } };
+  }).response;
+  return (
+    response?.status === 401 &&
+    ['AUTH_REQUIRED', 'INVALID_SESSION'].includes(response.data?.error?.code ?? '')
+  );
+}
 
 window.addEventListener('auth:expired', () => {
   queryClient.clear();
