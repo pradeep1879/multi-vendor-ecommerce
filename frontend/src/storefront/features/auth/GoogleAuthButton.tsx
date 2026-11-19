@@ -82,6 +82,8 @@ export function GoogleAuthButton() {
         });
         element.current.replaceChildren();
         window.google!.accounts.id.renderButton(element.current, {
+          type: 'standard',
+          text: 'signin_with',
           theme: 'outline',
           size: 'large',
           width: Math.min(396, element.current.clientWidth || 396),
@@ -134,7 +136,7 @@ export function GoogleAuthButton() {
   }, [adminOnly, navigate, queryClient]);
   return (
     <div className="google-auth-wrap" aria-busy={initializing || signingIn}>
-      <div className="relative w-full max-w-[396px]">
+      <div className="google-auth-frame relative">
         <div ref={element} className="google-auth-button" />
         {(initializing || signingIn) && (
           <div
