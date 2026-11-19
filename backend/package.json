@@ -15,7 +15,7 @@
     "test": "bun test",
     "test:db": "bun test src/infrastructure/database/database.integration.test.ts",
     "test:auth": "bun test src/modules/auth/auth.integration.test.ts",
-    "db:generate": "bunx --bun prisma generate",
+    "db:generate": "bunx --bun prisma generate && bun build src/prisma-client/client.ts --target=node --outfile=src/prisma-client/client.runtime.js --external @prisma/client/runtime/client",
     "db:validate": "bunx --bun prisma validate",
     "db:migrate": "bunx --bun prisma migrate dev",
     "db:deploy": "bunx --bun prisma migrate deploy",
