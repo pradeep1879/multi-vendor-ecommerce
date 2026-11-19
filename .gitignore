@@ -1,0 +1,23 @@
+# Dependencies and generated output
+**/node_modules/
+**/dist/
+**/generated/
+**/build/
+coverage/
+*.tsbuildinfo
+
+# Environment files: examples are safe to commit
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# Logs, caches, and editor/OS files
+*.log
+.eslintcache
+.cache/
+.DS_Store
+.idea/
+.vscode/
