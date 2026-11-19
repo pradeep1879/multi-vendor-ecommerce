@@ -5,6 +5,7 @@ import type { Environment } from '../../config/env.js';
 import { AuthRepository, type SessionSeed } from './auth.repository.js';
 import { AccessTokens } from './access-tokens.js';
 import { AuthEmailSender, type EmailSender } from './email.adapter.js';
+import { hashPassword, verifyPassword } from './password-hashing.js';
 
 type AuthUser = {
   id: string;
@@ -79,7 +80,7 @@ export class AuthService {
     const existing = await this.repository.findUserByEmail(email);
     if (existing) {
       const passwordMatches = existing.passwordHash
-        ? await Bun.password.verify(input.password, existing.passwordHash)
+        ? await verifyPassword(input.password, existing.passwordHash)
         : false;
       if (existing.disabledAt || !passwordMatches) {
         throw new AppError(
@@ -105,11 +106,7 @@ export class AuthService {
       }
       return this.createAuthResult(linked.user, linked.sessionId, refresh.refreshToken);
     }
-    const passwordHash = await Bun.password.hash(input.password, {
-      algorithm: 'argon2id',
-      memoryCost: 65536,
-      timeCost: 3,
-    });
+    const passwordHash = await hashPassword(input.password);
     try {
       const account = await this.repository.createCustomerAccount({
         email,
@@ -148,7 +145,7 @@ export class AuthService {
     const user = await this.repository.findUserByEmail(email);
     const passwordHash = user?.passwordHash ?? (await this.getDummyPasswordHash());
     const matches = user?.passwordHash
-      ? await Bun.password.verify(input.password, passwordHash)
+      ? await verifyPassword(input.password, passwordHash)
       : false;
     if (!user || !matches || user.disabledAt) {
       throw new AppError(401, 'INVALID_CREDENTIALS', 'Email or password is incorrect.');
@@ -284,11 +281,7 @@ export class AuthService {
   }
 
   async confirmPasswordReset(token: string, newPassword: string): Promise<void> {
-    const passwordHash = await Bun.password.hash(newPassword, {
-      algorithm: 'argon2id',
-      memoryCost: 65536,
-      timeCost: 3,
-    });
+    const passwordHash = await hashPassword(newPassword);
     const accepted = await this.repository.consumeVerificationToken({
       tokenHash: hashOpaqueToken(token),
       purpose: 'PASSWORD_RESET',
@@ -305,13 +298,9 @@ export class AuthService {
     newPassword: string,
   ): Promise<void> {
     const user = await this.repository.findPasswordHash(userId);
-    if (!user?.passwordHash || !(await Bun.password.verify(currentPassword, user.passwordHash)))
+    if (!user?.passwordHash || !(await verifyPassword(currentPassword, user.passwordHash)))
       throw new AppError(400, 'INVALID_CURRENT_PASSWORD', 'Current password is incorrect.');
-    const passwordHash = await Bun.password.hash(newPassword, {
-      algorithm: 'argon2id',
-      memoryCost: 65536,
-      timeCost: 3,
-    });
+    const passwordHash = await hashPassword(newPassword);
     await this.repository.changePassword(userId, passwordHash);
   }
 
@@ -384,11 +373,7 @@ export class AuthService {
   }
 
   private getDummyPasswordHash(): Promise<string> {
-    this.dummyPasswordHash ??= Bun.password.hash('not-a-valid-user-password', {
-      algorithm: 'argon2id',
-      memoryCost: 65536,
-      timeCost: 3,
-    });
+    this.dummyPasswordHash ??= hashPassword('not-a-valid-user-password');
     return this.dummyPasswordHash;
   }
 
