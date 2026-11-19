@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 import {
   ArrowRight,
   BarChart3,
@@ -70,12 +71,19 @@ function WorkspaceLoginPage({ role }: { role: WorkspaceRole }) {
         { replace: true },
       );
     },
-    onError: (reason) =>
-      setError(
-        reason instanceof Error
-          ? reason.message
-          : errorMessage(reason, 'Email or password is incorrect.'),
-      ),
+    onError: (reason) => {
+      if (axios.isAxiosError<{ error?: { message?: string; requestId?: string } }>(reason)) {
+        const requestId =
+          reason.response?.data?.error?.requestId ?? reason.response?.headers['x-request-id'];
+        if ((reason.response?.status ?? 0) >= 500) {
+          setError(
+            `Sign-in is temporarily unavailable. Please try again shortly.${requestId ? ` Reference: ${requestId}` : ''}`,
+          );
+          return;
+        }
+      }
+      setError(errorMessage(reason, 'Email or password is incorrect.'));
+    },
   });
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -209,6 +217,11 @@ function WorkspaceLoginPage({ role }: { role: WorkspaceRole }) {
               <LockKeyhole size={14} />
               <span>Your session uses the workspace’s secure sign-in cookie.</span>
             </div>
+            {error && (
+              <div className="workspace-login-error" role="alert">
+                {error}
+              </div>
+            )}
             <button
               className="workspace-login-submit"
               disabled={signIn.isPending || !email.trim() || !password}

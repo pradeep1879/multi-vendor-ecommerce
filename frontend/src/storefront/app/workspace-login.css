@@ -401,3 +401,25 @@
     height: 42px;
   }
 }
+
+/* Keep workspace sign-in focused and proportionate on wide screens too. */
+.workspace-login-layout {
+  width: min(480px, 100%);
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  padding: 32px 0;
+}
+.workspace-login-intro {
+  display: none;
+}
+.workspace-login-card {
+  padding: 27px 28px;
+}
+@media (max-width: 640px) {
+  .workspace-login-layout {
+    padding: 26px 0;
+  }
+  .workspace-login-card {
+    padding: 23px 20px;
+  }
+}
