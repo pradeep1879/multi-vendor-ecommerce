@@ -1,0 +1,15 @@
+import 'dotenv/config';
+import { defineConfig, env } from 'prisma/config';
+
+export default defineConfig({
+  schema: 'prisma/schema.prisma',
+  migrations: {
+    path: 'prisma/migrations',
+    seed: 'bun run prisma/seed.ts',
+  },
+  datasource: {
+    // Neon pooler URLs are for application traffic; Prisma Migrate requires
+    // a direct connection. Local Postgres can continue using DATABASE_URL.
+    url: process.env.DIRECT_URL || env('DATABASE_URL'),
+  },
+});
