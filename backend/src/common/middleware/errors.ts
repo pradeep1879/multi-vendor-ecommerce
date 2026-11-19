@@ -39,6 +39,7 @@ export const errorHandler: ErrorRequestHandler = (error: unknown, request, respo
     method: request.method,
     statusCode,
     code,
+    ...(statusCode >= 500 ? safeErrorMetadata(error) : {}),
   };
   (statusCode >= 500 ? console.error : console.warn)(JSON.stringify(log));
 
@@ -51,3 +52,16 @@ export const errorHandler: ErrorRequestHandler = (error: unknown, request, respo
     },
   });
 };
+
+function safeErrorMetadata(error: unknown): { errorType?: string; causeCode?: string | number } {
+  if (typeof error !== 'object' || error === null) return {};
+  const metadata: { errorType?: string; causeCode?: string | number } = {};
+  if ('name' in error && typeof error.name === 'string') metadata.errorType = error.name;
+  if (
+    'code' in error &&
+    (typeof error.code === 'string' || typeof error.code === 'number')
+  ) {
+    metadata.causeCode = error.code;
+  }
+  return metadata;
+}
