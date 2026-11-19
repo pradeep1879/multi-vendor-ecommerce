@@ -8,6 +8,7 @@ import type { Product } from '../../types/catalog';
 
 type ServerCart = {
   items: Array<{
+    id: string;
     variantId: string;
     quantity: number;
     variant: {
@@ -23,7 +24,7 @@ type ServerCart = {
         slug: string;
         name: string;
         type: string;
-        shortDescription: string | null;
+        shortDescription: string;
         brand: { name: string };
         images: Array<{ url: string }>;
       };
@@ -49,6 +50,7 @@ export function useCartView() {
   for (const item of serverQuery.data?.items ?? []) {
     const variant = item.variant;
     const productData = variant.product;
+    const availableQuantity = Math.max(0, variant.availableQuantity - variant.reservedQuantity);
     const product: Product = {
       id: productData.id,
       variantId: variant.id,
@@ -60,18 +62,19 @@ export function useCartView() {
       pricePaise: variant.pricePaise,
       compareAtPaise: variant.compareAtPaise ?? undefined,
       image: productData.images[0]?.url ?? '',
-      availableQuantity: Math.max(0, variant.availableQuantity - variant.reservedQuantity),
+      availableQuantity,
       rating: 0,
       reviewCount: 0,
     };
     serverLines[variant.id] = {
       product,
       variantId: variant.id,
+      cartItemId: item.id,
       variantName: variant.name,
       sku: variant.sku,
       pricePaise: variant.pricePaise,
       compareAtPaise: variant.compareAtPaise,
-      availableQuantity: product.availableQuantity ?? 0,
+      availableQuantity,
       quantity: item.quantity,
     };
   }
@@ -125,19 +128,27 @@ export function useCartView() {
         )
       : localLines;
   const changeQuantity = (variantId: string, quantity: number) => {
-    if (isCustomer && serverLines[variantId]) {
+    const serverLine = serverLines[variantId];
+    if (isCustomer && serverLine?.cartItemId) {
       const request =
         quantity < 1
-          ? api.delete(`/cart/items/${encodeURIComponent(variantId)}`)
-          : api.patch(`/cart/items/${encodeURIComponent(variantId)}`, { quantity });
-      void request.then(() => serverQuery.refetch()).catch(() => serverQuery.refetch());
+          ? api.delete(`/cart/items/${encodeURIComponent(serverLine.cartItemId)}`)
+          : api.patch(`/cart/items/${encodeURIComponent(serverLine.cartItemId)}`, { quantity });
+      void request.then(
+        () => serverQuery.refetch(),
+        () => serverQuery.refetch(),
+      );
     } else setQuantity(variantId, quantity);
   };
   const remove = (variantId: string) => {
-    if (isCustomer)
+    const serverLine = serverLines[variantId];
+    if (isCustomer && serverLine?.cartItemId)
       void api
-        .delete(`/cart/items/${encodeURIComponent(variantId)}`)
-        .then(() => serverQuery.refetch());
+        .delete(`/cart/items/${encodeURIComponent(serverLine.cartItemId)}`)
+        .then(
+          () => serverQuery.refetch(),
+          () => serverQuery.refetch(),
+        );
     removeLocal(variantId);
   };
   return {

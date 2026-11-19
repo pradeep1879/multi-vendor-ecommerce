@@ -9,6 +9,7 @@ import { ProductDetailPage } from '../pages/ProductDetailPage';
 import { CartPage, CheckoutPage } from '../pages/CartCheckoutPages';
 import { WishlistPage as StorefrontWishlistPage } from '../pages/WishlistPage';
 import { VendorApplicationPage } from '../pages/VendorApplicationPage';
+import { roleDestination } from './workspace-access';
 
 const WorkspaceGate = lazy(() =>
   import('./Workspace').then((module) => ({ default: module.WorkspaceGate })),
@@ -79,6 +80,12 @@ const SignupForm = lazy(() =>
 const VerifyEmailPage = lazy(() =>
   import('../features/auth/AuthForms').then((module) => ({ default: module.VerifyEmailPage })),
 );
+const RoleSelectionPage = lazy(() =>
+  import('./RoleSelectionPage').then((module) => ({ default: module.RoleSelectionPage })),
+);
+const VendorApplicationStatusPage = lazy(() =>
+  import('./RoleSelectionPage').then((module) => ({ default: module.VendorApplicationStatusPage })),
+);
 
 function Authenticated({ children }: { children: ReactNode }) {
   const auth = useAuth();
@@ -90,6 +97,8 @@ function Authenticated({ children }: { children: ReactNode }) {
       </div>
     );
   if (!auth.data) return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+  if (!auth.data.roles.includes('CUSTOMER'))
+    return <Navigate to={roleDestination(auth.data.role, auth.data.vendorStatus)} replace />;
   return <>{children}</>;
 }
 
@@ -105,18 +114,8 @@ function LoginRoute() {
     nextPath.startsWith('/vendor');
   if (auth.data) {
     if (staffSwitch) return <LoginForm currentUser={auth.data} />;
-    return (
-      <Navigate
-        to={
-          auth.data.role === 'ADMIN'
-            ? '/admin/dashboard'
-            : auth.data.role === 'VENDOR'
-              ? '/vendor/dashboard'
-              : '/account'
-        }
-        replace
-      />
-    );
+    if (auth.data.roles.length > 1) return <Navigate to="/select-role" replace />;
+    return <Navigate to={roleDestination(auth.data.role, auth.data.vendorStatus)} replace />;
   }
   return <LoginForm />;
 }
@@ -165,12 +164,13 @@ export default function App() {
               </Authenticated>
             }
           />
-          {/* A valid session goes to its account; recovery stays available independently. */}
+          {/* A valid customer session returns to the storefront; recovery stays independent. */}
           <Route path="/login" element={<LoginRoute />} />
           <Route path="/signup" element={<SignupForm />} />
           <Route path="/forgot-password" element={<ForgotPasswordForm />} />
           <Route path="/reset-password" element={<ResetPasswordForm />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
+          <Route path="/select-role" element={<RoleSelectionPage />} />
           <Route
             path="/account"
             element={
@@ -196,6 +196,7 @@ export default function App() {
         so an administrator can switch accounts without the guest guard bouncing away. */}
           <Route path="/admin/login" element={<WorkspaceLoginGate role="ADMIN" />} />
           <Route path="/vendor/login" element={<WorkspaceLoginGate role="VENDOR" />} />
+          <Route path="/vendor/application-status" element={<VendorApplicationStatusPage />} />
           <Route path="/admin/*" element={<WorkspaceGate role="ADMIN" />} />
           <Route path="/vendor/*" element={<WorkspaceGate role="VENDOR" />} />
           <Route path="/marketplace/*" element={<LegacyWorkspaceRedirect />} />
@@ -216,18 +217,7 @@ function LegacyWorkspaceRedirect() {
       </div>
     );
   if (!auth.data) return <Navigate to="/login" replace state={{ from: location.pathname }} />;
-  return (
-    <Navigate
-      to={
-        auth.data.role === 'ADMIN'
-          ? '/admin/dashboard'
-          : auth.data.role === 'VENDOR'
-            ? '/vendor/dashboard'
-            : '/sell-with-us'
-      }
-      replace
-    />
-  );
+  return <Navigate to={roleDestination(auth.data.role, auth.data.vendorStatus)} replace />;
 }
 
 function NotFoundPage() {

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -24,9 +24,16 @@ import {
   Users,
   X,
 } from 'lucide-react';
-import { api, setStorefrontAccessToken } from '../api/client';
+import { api } from '../api/client';
 import { showToast } from '../../components/feedback/toast';
-import { useAuth } from '../features/auth/auth-state';
+import {
+  authQueryKey,
+  logoutCurrentSession,
+  useAuth,
+  type AuthRole,
+  type AuthUser,
+} from '../features/auth/auth-state';
+import { RoleSwitchControl } from './RoleSelectionPage';
 import {
   canAccessWorkspace,
   nextVendorOrderAction,
@@ -82,6 +89,34 @@ const vendorNavigation = [
 export function WorkspaceGate({ role }: { role: Role }) {
   const auth = useAuth();
   const location = useLocation();
+  const queryClient = useQueryClient();
+  const activationRequested = useRef(false);
+  const activateRole = useMutation({
+    mutationFn: async (requestedRole: AuthRole) => {
+      const response = await api.post<{
+        data: { role: AuthRole; vendorStatus?: AuthUser['vendorStatus'] };
+      }>('/auth/role/switch', { role: requestedRole });
+      return response.data.data;
+    },
+    onSuccess: ({ role: activeRole, vendorStatus }) => {
+      queryClient.setQueryData(authQueryKey, (current: AuthUser | undefined) =>
+        current
+          ? { ...current, role: activeRole, ...(vendorStatus ? { vendorStatus } : {}) }
+          : current,
+      );
+    },
+  });
+  useEffect(() => {
+    if (!auth.data || !auth.data.roles.includes(role)) return;
+    if (auth.data.role === role) {
+      activationRequested.current = false;
+      return;
+    }
+    if (!activationRequested.current) {
+      activationRequested.current = true;
+      activateRole.mutate(role);
+    }
+  }, [activateRole, auth.data, role]);
   if (auth.isLoading)
     return (
       <div className="workspace-loading" role="status">
@@ -96,8 +131,19 @@ export function WorkspaceGate({ role }: { role: Role }) {
         state={{ from: location.pathname }}
       />
     );
-  if (!canAccessWorkspace(role, auth.data.role))
-    return <Navigate to={workspaceHome(auth.data.role)} replace />;
+  if (!canAccessWorkspace(role, auth.data.roles))
+    return <Navigate to={workspaceHome(auth.data.role, auth.data.vendorStatus)} replace />;
+  if (role === 'VENDOR' && auth.data.vendorStatus !== 'APPROVED')
+    return <Navigate to="/vendor/application-status" replace />;
+  if (auth.data.role !== role) {
+    if (activateRole.isError)
+      return <Navigate to={workspaceHome(auth.data.role, auth.data.vendorStatus)} replace />;
+    return (
+      <div className="workspace-loading" role="status">
+        <span className="workspace-spinner" /> Activating your workspace…
+      </div>
+    );
+  }
   return <Workspace role={role} />;
 }
 
@@ -158,10 +204,8 @@ function Workspace({ role }: { role: Role }) {
     },
   });
   const logout = useMutation({
-    mutationFn: () => api.post('/auth/logout'),
+    mutationFn: () => logoutCurrentSession(queryClient),
     onSettled: () => {
-      setStorefrontAccessToken('');
-      queryClient.clear();
       navigate(admin ? '/admin/login' : '/vendor/login', { replace: true });
     },
   });
@@ -251,6 +295,7 @@ function Workspace({ role }: { role: Role }) {
             />
             <kbd>⌘ K</kbd>
           </label>
+          <RoleSwitchControl />
           <div className="workspace-user">
             <span className="workspace-avatar">{displayName.slice(0, 1).toUpperCase()}</span>
             <span>

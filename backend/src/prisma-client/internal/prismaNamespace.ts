@@ -398,6 +398,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   User: 'User',
+  Customer: 'Customer',
   ExternalIdentity: 'ExternalIdentity',
   UserRole: 'UserRole',
   Session: 'Session',
@@ -460,7 +461,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "externalIdentity" | "userRole" | "session" | "verificationToken" | "address" | "vendorApplication" | "vendor" | "vendorAddress" | "category" | "brand" | "product" | "productVariant" | "searchOutboxEvent" | "productImage" | "inventory" | "inventoryMovement" | "taxRule" | "commissionRule" | "cart" | "cartItem" | "order" | "vendorOrder" | "orderItem" | "wishlistItem" | "returnRequest" | "shipment" | "shipmentEvent" | "orderStatusHistory" | "vendorOrderStatusHistory" | "payment" | "paymentAttempt" | "refund" | "refundAllocation" | "vendorSettlement" | "settlementItem" | "coupon" | "couponProduct" | "couponCategory" | "couponRedemption" | "review" | "accountNotification" | "notificationPreference" | "auditLog" | "webhookEvent" | "idempotencyRecord" | "ledgerTransaction" | "ledgerEntry"
+    modelProps: "user" | "customer" | "externalIdentity" | "userRole" | "session" | "verificationToken" | "address" | "vendorApplication" | "vendor" | "vendorAddress" | "category" | "brand" | "product" | "productVariant" | "searchOutboxEvent" | "productImage" | "inventory" | "inventoryMovement" | "taxRule" | "commissionRule" | "cart" | "cartItem" | "order" | "vendorOrder" | "orderItem" | "wishlistItem" | "returnRequest" | "shipment" | "shipmentEvent" | "orderStatusHistory" | "vendorOrderStatusHistory" | "payment" | "paymentAttempt" | "refund" | "refundAllocation" | "vendorSettlement" | "settlementItem" | "coupon" | "couponProduct" | "couponCategory" | "couponRedemption" | "review" | "accountNotification" | "notificationPreference" | "auditLog" | "webhookEvent" | "idempotencyRecord" | "ledgerTransaction" | "ledgerEntry"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -535,6 +536,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UserCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UserCountAggregateOutputType> | number
+        }
+      }
+    }
+    Customer: {
+      payload: Prisma.$CustomerPayload<ExtArgs>
+      fields: Prisma.CustomerFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CustomerFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CustomerFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerPayload>
+        }
+        findFirst: {
+          args: Prisma.CustomerFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CustomerFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerPayload>
+        }
+        findMany: {
+          args: Prisma.CustomerFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerPayload>[]
+        }
+        create: {
+          args: Prisma.CustomerCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerPayload>
+        }
+        createMany: {
+          args: Prisma.CustomerCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CustomerCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerPayload>[]
+        }
+        delete: {
+          args: Prisma.CustomerDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerPayload>
+        }
+        update: {
+          args: Prisma.CustomerUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerPayload>
+        }
+        deleteMany: {
+          args: Prisma.CustomerDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CustomerUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CustomerUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerPayload>[]
+        }
+        upsert: {
+          args: Prisma.CustomerUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerPayload>
+        }
+        aggregate: {
+          args: Prisma.CustomerAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCustomer>
+        }
+        groupBy: {
+          args: Prisma.CustomerGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CustomerGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CustomerCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CustomerCountAggregateOutputType> | number
         }
       }
     }
@@ -4071,6 +4146,16 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const CustomerScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CustomerScalarFieldEnum = (typeof CustomerScalarFieldEnum)[keyof typeof CustomerScalarFieldEnum]
+
+
 export const ExternalIdentityScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -5415,6 +5500,7 @@ export interface PrismaClientOptionsWithAdapter extends PrismaClientBaseOptions 
 export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaClientOptionsWithAdapter
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
+  customer?: Prisma.CustomerOmit
   externalIdentity?: Prisma.ExternalIdentityOmit
   userRole?: Prisma.UserRoleOmit
   session?: Prisma.SessionOmit

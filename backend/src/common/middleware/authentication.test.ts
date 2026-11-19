@@ -19,7 +19,13 @@ describe('workspace route authorization', () => {
           userId: `${token}_user`,
           sessionId: `${token}_session`,
           roles,
-          user: { id: `${token}_user`, email: `${token}@example.test`, name: token, roles },
+          user: {
+            id: `${token}_user`,
+            email: `${token}@example.test`,
+            name: token,
+            roles,
+            ...(token === 'vendor_test_token' ? { vendorStatus: 'APPROVED' as const } : {}),
+          },
         };
       },
     } as unknown as AuthService;

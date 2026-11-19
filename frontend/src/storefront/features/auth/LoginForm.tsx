@@ -8,7 +8,12 @@ import { Button } from '../../components/ui/button';
 import { AuthLayout } from './AuthLayout';
 import { GoogleAuthButton } from './GoogleAuthButton';
 import { PasswordField } from './PasswordField';
-import { authQueryKey, type AuthUser } from './auth-state';
+import {
+  authQueryKey,
+  normalizeAuthUser,
+  type AuthUser,
+  type AuthUserResponse,
+} from './auth-state';
 import { errorMessage } from './auth-error';
 import { EmailField, AuthError, SocialDivider } from './AuthFields';
 
@@ -33,19 +38,13 @@ export function LoginForm({ currentUser }: { currentUser?: AuthUser }) {
     setNeedsVerification(false);
     try {
       await queryClient.cancelQueries({ queryKey: authQueryKey });
-      const response = await api.post<{
-        data: { user: AuthUser & { roles?: string[] }; accessToken: string };
-      }>('/auth/login', { email, password });
+      const response = await api.post<{ data: { user: AuthUserResponse; accessToken: string } }>(
+        '/auth/login',
+        { email, password },
+      );
       const { user, accessToken } = response.data.data;
       setStorefrontAccessToken(accessToken);
-      const signedInUser = {
-        ...user,
-        role: user.roles?.includes('ADMIN')
-          ? 'ADMIN'
-          : user.roles?.includes('VENDOR')
-            ? 'VENDOR'
-            : 'CUSTOMER',
-      } as AuthUser;
+      const signedInUser = normalizeAuthUser(user);
       queryClient.setQueryData(authQueryKey, signedInUser);
       const intended = (routeLocation.state as { from?: string } | null)?.from;
       const next = params.get('next');
@@ -60,15 +59,19 @@ export function LoginForm({ currentUser }: { currentUser?: AuthUser }) {
         signedInUser.role === 'ADMIN'
           ? '/admin/dashboard'
           : signedInUser.role === 'VENDOR'
-            ? '/vendor/dashboard'
-            : '/account';
+            ? signedInUser.vendorStatus === 'APPROVED'
+              ? '/vendor/dashboard'
+              : '/vendor/application-status'
+            : '/';
       navigate(
-        safeNext ??
-          (intended?.startsWith('/') &&
-          !intended.startsWith('/admin') &&
-          !intended.startsWith('/vendor')
-            ? intended
-            : roleHome),
+        signedInUser.roles.length > 1
+          ? '/select-role'
+          : (safeNext ??
+              (intended?.startsWith('/') &&
+              !intended.startsWith('/admin') &&
+              !intended.startsWith('/vendor')
+                ? intended
+                : roleHome)),
         { replace: true },
       );
     } catch (reason) {
@@ -83,6 +86,7 @@ export function LoginForm({ currentUser }: { currentUser?: AuthUser }) {
   }
   return (
     <AuthLayout
+      className="store-auth-login"
       title={
         <>
           Welcome <em>back.</em>
@@ -97,6 +101,7 @@ export function LoginForm({ currentUser }: { currentUser?: AuthUser }) {
             : 'Sign in to see your orders, saved rituals and little favourites.'
       }
     >
+      {!admin && <p className="login-eyebrow">MAISON BEAUTÉ <span>·</span> YOUR ACCOUNT</p>}
       {admin && currentUser?.role === 'CUSTOMER' && (
         <div className="auth-hint" role="status">
           Signed in as {currentUser.email}. Enter an administrator account to switch.

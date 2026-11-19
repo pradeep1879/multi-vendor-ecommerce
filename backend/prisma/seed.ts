@@ -17,7 +17,10 @@ const accountPasswords = {
   vendorTwo: process.env.DEV_SEED_VENDOR_TWO_PASSWORD ?? seedPassword,
 };
 for (const [account, password] of Object.entries(accountPasswords)) {
-  if (password.length < 12) throw new Error(`The development seed password for ${account} must contain at least 12 characters.`);
+  if (password.length < 12)
+    throw new Error(
+      `The development seed password for ${account} must contain at least 12 characters.`,
+    );
 }
 
 const prisma = new PrismaClient({
@@ -126,8 +129,18 @@ const vendors = [
 try {
   await prisma.$transaction(async (tx) => {
     const seedUsers = [
-      { id: ids.admin, email: 'admin@example.test', name: 'Local Admin', passwordHash: passwordHashes.admin },
-      { id: ids.customer, email: 'customer@example.test', name: 'Local Customer', passwordHash: passwordHashes.customer },
+      {
+        id: ids.admin,
+        email: 'admin@example.test',
+        name: 'Local Admin',
+        passwordHash: passwordHashes.admin,
+      },
+      {
+        id: ids.customer,
+        email: 'customer@example.test',
+        name: 'Local Customer',
+        passwordHash: passwordHashes.customer,
+      },
       ...vendors.map((vendor, index) => ({
         id: vendor.ownerId,
         email: vendor.email,
@@ -164,6 +177,13 @@ try {
         create: role,
         update: {},
       });
+      if (role.role === 'CUSTOMER') {
+        await tx.customer.upsert({
+          where: { userId: role.userId },
+          create: { userId: role.userId },
+          update: {},
+        });
+      }
     }
 
     for (const vendor of vendors) {
@@ -450,9 +470,15 @@ try {
   });
   console.log('Development seed applied. Login accounts:');
   console.log('  Admin:  admin@example.test (DEV_SEED_ADMIN_PASSWORD or DEV_SEED_PASSWORD)');
-  console.log('  Vendor: vendor-one@example.test (DEV_SEED_VENDOR_ONE_PASSWORD or DEV_SEED_PASSWORD)');
-  console.log('  Vendor: vendor-two@example.test (DEV_SEED_VENDOR_TWO_PASSWORD or DEV_SEED_PASSWORD)');
-  console.log('  Customer fixture: customer@example.test (DEV_SEED_CUSTOMER_PASSWORD or DEV_SEED_PASSWORD)');
+  console.log(
+    '  Vendor: vendor-one@example.test (DEV_SEED_VENDOR_ONE_PASSWORD or DEV_SEED_PASSWORD)',
+  );
+  console.log(
+    '  Vendor: vendor-two@example.test (DEV_SEED_VENDOR_TWO_PASSWORD or DEV_SEED_PASSWORD)',
+  );
+  console.log(
+    '  Customer fixture: customer@example.test (DEV_SEED_CUSTOMER_PASSWORD or DEV_SEED_PASSWORD)',
+  );
 } finally {
   await prisma.$disconnect();
 }

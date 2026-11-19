@@ -61,6 +61,12 @@ export function createAuthRouter(
   );
   router.post('/auth/refresh', requireOrigin, controller.refresh);
   router.post('/auth/logout', requireOrigin, controller.logout);
+  router.post(
+    '/auth/role/switch',
+    requireUser,
+    validateRequest({ body: z.object({ role: z.enum(['CUSTOMER', 'VENDOR', 'ADMIN']) }).strict() }),
+    controller.switchRole,
+  );
   router.post('/auth/logout-all', requireUser, controller.logoutAll);
   router.post(
     '/auth/password/change',

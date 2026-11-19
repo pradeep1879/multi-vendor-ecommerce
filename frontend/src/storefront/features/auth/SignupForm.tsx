@@ -8,11 +8,10 @@ import { Input } from '../../components/ui/input';
 import { AuthLayout } from './AuthLayout';
 import { GoogleAuthButton } from './GoogleAuthButton';
 import { PasswordField } from './PasswordField';
-import { PasswordStrength } from './PasswordStrength';
 import { isStrongPassword } from './password-policy';
 import { errorMessage } from './auth-error';
 import { EmailField, AuthError, SocialDivider } from './AuthFields';
-import { authQueryKey } from './auth-state';
+import { authQueryKey, normalizeAuthUser } from './auth-state';
 
 export function SignupForm() {
   const [name, setName] = useState('');
@@ -34,7 +33,13 @@ export function SignupForm() {
     try {
       const result = await api.post<{
         data: {
-          user: { id: string; name: string; email: string; roles: string[] };
+          user: {
+            id: string;
+            name: string;
+            email: string;
+            roles: ('CUSTOMER' | 'VENDOR' | 'ADMIN')[];
+            vendorStatus?: 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED';
+          };
           accessToken: string;
         };
       }>('/auth/signup', {
@@ -45,15 +50,9 @@ export function SignupForm() {
       });
       setStorefrontAccessToken(result.data.data.accessToken);
       const user = result.data.data.user;
-      queryClient.setQueryData(authQueryKey, {
-        ...user,
-        role: user.roles.includes('ADMIN')
-          ? 'ADMIN'
-          : user.roles.includes('VENDOR')
-            ? 'VENDOR'
-            : 'CUSTOMER',
-      });
-      navigate('/account', { replace: true });
+      const signedInUser = normalizeAuthUser(user);
+      queryClient.setQueryData(authQueryKey, signedInUser);
+      navigate(signedInUser.roles.length > 1 ? '/select-role' : '/', { replace: true });
     } catch (reason) {
       setError(errorMessage(reason, 'We couldn’t create your account. Please try again.'));
     } finally {
@@ -62,6 +61,7 @@ export function SignupForm() {
   }
   return (
     <AuthLayout
+      className="store-auth-signup"
       title={
         <>
           Create <em>account.</em>
@@ -69,48 +69,60 @@ export function SignupForm() {
       }
       description="A little place for your favourite rituals."
     >
-      <form onSubmit={submit} className="auth-form">
-        <label className="auth-field">
-          Full name
-          <Input
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            autoComplete="name"
-            required
-            minLength={2}
-            maxLength={100}
+      <p className="signup-eyebrow">MAISON BEAUTÉ <span>·</span> YOUR ACCOUNT</p>
+      <form onSubmit={submit} className="auth-form signup-form">
+        <div className="signup-name">
+          <label className="auth-field">
+            Full name
+            <Input
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              autoComplete="name"
+              required
+              minLength={2}
+              maxLength={100}
+            />
+          </label>
+        </div>
+        <div className="signup-email">
+          <EmailField value={email} onChange={setEmail} />
+        </div>
+        <div className="signup-password">
+          <PasswordField
+            label="Password"
+            name="signup-password"
+            value={password}
+            onChange={setPassword}
+            autoComplete="new-password"
           />
-        </label>
-        <EmailField value={email} onChange={setEmail} />
-        <PasswordField
-          label="Password"
-          name="signup-password"
-          value={password}
-          onChange={setPassword}
-          autoComplete="new-password"
-        />
-        <PasswordStrength value={password} />
-        <PasswordField
-          label="Confirm password"
-          name="signup-confirm-password"
-          value={confirm}
-          onChange={setConfirm}
-          autoComplete="new-password"
-        />
-        {message && (
-          <div className="auth-success" role="status">
-            {message}
-          </div>
-        )}
-        <AuthError>{error}</AuthError>
-        <Button className="button button-dark" disabled={busy}>
-          {busy ? 'Creating account…' : 'Create account'} <ArrowRight size={15} />
-        </Button>
+        </div>
+        <div className="signup-confirm">
+          <PasswordField
+            label="Confirm password"
+            name="signup-confirm-password"
+            value={confirm}
+            onChange={setConfirm}
+            autoComplete="new-password"
+          />
+        </div>
+        <div className="signup-submit">
+          {message && (
+            <div className="auth-success" role="status">
+              {message}
+            </div>
+          )}
+          <AuthError>{error}</AuthError>
+          <Button className="button button-dark" disabled={busy}>
+            {busy ? 'Creating account…' : 'Create account'} <ArrowRight size={15} />
+          </Button>
+        </div>
       </form>
-      <SocialDivider />
-      <GoogleAuthButton />
-      <div className="auth-switch">
-        Already have an account? <Link to="/login">Login</Link>
+      <div className="signup-social">
+        <SocialDivider />
+        <GoogleAuthButton />
+        <div className="auth-switch">
+          Already have an account? <Link to="/login">Login</Link>
+        </div>
       </div>
     </AuthLayout>
   );

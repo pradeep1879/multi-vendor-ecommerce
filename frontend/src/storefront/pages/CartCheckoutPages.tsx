@@ -136,7 +136,14 @@ export function CheckoutPage() {
                   <span>{flow.auth.data.email}</span>
                 </p>
               </div>
-              <AddressFields address={flow.address} update={flow.update} />
+              <AddressFields
+                address={flow.address}
+                update={flow.update}
+                savedAddresses={flow.savedAddresses}
+                selectedAddressId={flow.selectedAddressId}
+                selectSavedAddress={flow.selectSavedAddress}
+                startNewAddress={flow.startNewAddress}
+              />
               <PaymentMethods
                 value={flow.paymentMethod}
                 onChange={flow.setPaymentMethod}

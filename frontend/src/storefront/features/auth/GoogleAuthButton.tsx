@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { api, setStorefrontAccessToken } from '../../api/client';
-import { authQueryKey, type AuthUser } from './auth-state';
+import { authQueryKey, normalizeAuthUser, type AuthUserResponse } from './auth-state';
 import { errorMessage } from './auth-error';
 import { showToast } from '../../../components/feedback/toast';
 
@@ -50,26 +50,23 @@ export function GoogleAuthButton() {
             try {
               await queryClient.cancelQueries({ queryKey: authQueryKey });
               const response = await api.post<{
-                data: { user: AuthUser & { roles?: string[] }; accessToken: string };
+                data: { user: AuthUserResponse; accessToken: string };
               }>('/auth/google', { credential }, { timeout: 15_000 });
               if (cancelled) return;
               setStorefrontAccessToken(response.data.data.accessToken);
               const user = response.data.data.user;
-              const signedInUser = {
-                ...user,
-                role: user.roles?.includes('ADMIN')
-                  ? 'ADMIN'
-                  : user.roles?.includes('VENDOR')
-                    ? 'VENDOR'
-                    : 'CUSTOMER',
-              } as AuthUser;
+              const signedInUser = normalizeAuthUser(user);
               queryClient.setQueryData(authQueryKey, signedInUser);
               navigate(
-                signedInUser.role === 'ADMIN'
-                  ? '/admin/dashboard'
-                  : signedInUser.role === 'VENDOR'
-                    ? '/vendor/dashboard'
-                    : '/account',
+                signedInUser.roles.length > 1
+                  ? '/select-role'
+                  : signedInUser.role === 'ADMIN'
+                    ? '/admin/dashboard'
+                    : signedInUser.role === 'VENDOR'
+                      ? signedInUser.vendorStatus === 'APPROVED'
+                        ? '/vendor/dashboard'
+                        : '/vendor/application-status'
+                      : '/',
                 { replace: true },
               );
             } catch (error) {

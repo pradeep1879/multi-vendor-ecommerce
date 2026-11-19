@@ -1,15 +1,20 @@
-import type { AuthUser } from '../features/auth/auth-state';
+import type { AuthRole, AuthUser } from '../features/auth/auth-state';
 
 export type WorkspaceRole = Extract<AuthUser['role'], 'ADMIN' | 'VENDOR'>;
 
-export function workspaceHome(role: AuthUser['role']) {
-  if (role === 'ADMIN') return '/admin/dashboard';
-  if (role === 'VENDOR') return '/vendor/dashboard';
-  return '/account';
+export function workspaceHome(role: AuthUser['role'], vendorStatus?: AuthUser['vendorStatus']) {
+  return roleDestination(role, vendorStatus);
 }
 
-export function canAccessWorkspace(requiredRole: WorkspaceRole, userRole: AuthUser['role']) {
-  return requiredRole === userRole;
+export function canAccessWorkspace(requiredRole: WorkspaceRole, userRoles: readonly AuthRole[]) {
+  return userRoles.includes(requiredRole);
+}
+
+export function roleDestination(role: AuthRole, vendorStatus?: AuthUser['vendorStatus']) {
+  if (role === 'ADMIN') return '/admin/dashboard';
+  if (role === 'VENDOR')
+    return vendorStatus === 'APPROVED' ? '/vendor/dashboard' : '/vendor/application-status';
+  return '/';
 }
 
 export function nextVendorOrderAction(status: string) {

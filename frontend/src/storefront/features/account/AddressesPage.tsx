@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 import { MapPin } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -8,6 +9,32 @@ import { showToast } from '../../../components/feedback/toast';
 import { keys } from './account-utils';
 import { State, PageTitle, Panel } from './AccountUI';
 import { type AddressDraft, emptyAddress } from './address-draft';
+
+function addressSaveError(reason: unknown) {
+  if (!axios.isAxiosError<{ error?: { message?: string; details?: Array<{ field: string; issue: string }> } }>(reason))
+    return 'We couldn’t save this address. Please check the details and try again.';
+
+  const error = reason.response?.data?.error;
+  const fields = error?.details?.map(({ field, issue }) => {
+    const key = field.replace(/^(body\.)/, '');
+    const labels: Record<string, string> = {
+      recipient: 'Full name',
+      phone: 'Phone',
+      line1: 'Address line 1',
+      line2: 'Address line 2',
+      locality: 'Landmark',
+      city: 'City',
+      region: 'State',
+      postalCode: 'Pincode',
+      countryCode: 'Country',
+      isDefault: 'Default address',
+    };
+    return `${labels[key] ?? key}: ${issue}`;
+  });
+
+  if (fields?.length) return fields.join(' ');
+  return error?.message ?? 'We couldn’t save this address. Please try again.';
+}
 
 export function AddressesPage() {
   const qc = useQueryClient();
@@ -33,6 +60,7 @@ export function AddressesPage() {
       setError('');
       void refresh();
     },
+    onError: (reason) => setError(addressSaveError(reason)),
   });
   const remove = useMutation({
     mutationFn: accountApi.removeAddress,
@@ -89,6 +117,11 @@ export function AddressesPage() {
             <h3 className="font-store text-xl sm:col-span-2">
               {editing ? 'Edit address' : 'Add a new address'}
             </h3>
+            {error && (
+              <p className="sm:col-span-2 rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800" role="alert">
+                {error}
+              </p>
+            )}
             {(
               [
                 ['Full name', 'fullName'],

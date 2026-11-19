@@ -208,6 +208,118 @@
 .customer-store .google-auth-container {
   margin-inline: auto;
 }
+.customer-store .store-auth-signup,
+.customer-store .store-auth-login {
+  width: min(calc(100% - 32px), 760px);
+  max-width: 760px;
+  box-sizing: border-box;
+  min-height: 0;
+  margin: clamp(20px, 3vh, 32px) auto 44px;
+  padding: clamp(28px, 4vh, 38px) clamp(28px, 5vw, 58px) 30px;
+  border: 1px solid var(--store-line);
+  background: #fff;
+  box-shadow: 0 16px 44px rgb(38 36 30 / 7%);
+}
+.customer-store .store-auth-signup h1,
+.customer-store .store-auth-login h1 {
+  margin-bottom: 10px;
+  font-size: clamp(34px, 4vw, 42px);
+  line-height: 1.12;
+}
+.customer-store .store-auth-signup .store-auth-description,
+.customer-store .store-auth-login .store-auth-description {
+  margin-bottom: 20px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+.customer-store .signup-eyebrow {
+  margin: 0 0 20px;
+  color: var(--store-muted);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-align: center;
+}
+.customer-store .signup-eyebrow span {
+  padding-inline: 4px;
+  color: #b18a70;
+}
+.customer-store .login-eyebrow {
+  margin: 0 0 20px;
+  color: var(--store-muted);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-align: center;
+}
+.customer-store .login-eyebrow span {
+  padding-inline: 4px;
+  color: #b18a70;
+}
+.customer-store .store-auth-login .auth-form {
+  gap: 14px;
+}
+.customer-store .store-auth-login .auth-forgot {
+  margin-top: -4px;
+  text-align: right;
+}
+.customer-store .store-auth-login .auth-form > .button {
+  min-height: 48px;
+}
+.customer-store .signup-form {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 14px 22px;
+}
+.customer-store .signup-form > div {
+  min-width: 0;
+}
+.customer-store .signup-form .auth-field {
+  gap: 6px;
+  font-size: 14px;
+}
+.customer-store .signup-form .auth-field input {
+  min-height: 46px;
+  height: 46px;
+  font-size: 15px;
+}
+.customer-store .signup-password {
+  display: block;
+}
+.customer-store .signup-submit {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 8px;
+}
+.customer-store .signup-submit > .button {
+  min-height: 48px;
+  margin-top: 0;
+}
+.customer-store .signup-social .google-auth-wrap,
+.customer-store .store-auth-login > .google-auth-wrap {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+.customer-store .signup-social .google-auth-wrap > div,
+.customer-store .store-auth-login > .google-auth-wrap > div {
+  width: min(100%, 396px);
+  max-width: 396px;
+}
+.customer-store .signup-social .google-auth-button,
+.customer-store .store-auth-login .google-auth-button {
+  width: min(100%, 396px);
+}
+.customer-store .signup-social iframe,
+.customer-store .store-auth-login iframe {
+  max-width: 100%;
+}
+.customer-store .signup-social .auth-divider {
+  margin: 14px 0 12px;
+}
+.customer-store .signup-social .auth-switch {
+  margin-top: 12px;
+}
 .customer-store button[data-store-variant='default'] {
   background: var(--store-dark);
   color: white;
@@ -266,5 +378,30 @@
   }
   .customer-store .store-auth h1 {
     font-size: 30px;
+  }
+}
+@media (max-width: 639px) {
+  .customer-store .store-auth-signup,
+  .customer-store .store-auth-login {
+    width: calc(100% - 28px);
+    margin-block: 18px 36px;
+    padding: 26px 20px 28px;
+  }
+  .customer-store .store-auth-signup .store-auth-description,
+  .customer-store .store-auth-login .store-auth-description {
+    margin-bottom: 22px;
+  }
+  .customer-store .signup-form {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 13px;
+  }
+  .customer-store .signup-eyebrow {
+    margin-bottom: 16px;
+  }
+  .customer-store .login-eyebrow {
+    margin-bottom: 16px;
+  }
+  .customer-store .signup-submit {
+    grid-column: auto;
   }
 }

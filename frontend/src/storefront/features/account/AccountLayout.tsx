@@ -13,8 +13,9 @@ import {
   SlidersHorizontal,
   Star,
 } from 'lucide-react';
-import { api } from '../../api/client';
 import { StoreShell } from '../../components/storefront/StoreShell';
+import { RoleSwitchControl } from '../../app/RoleSelectionPage';
+import { logoutCurrentSession } from '../auth/auth-state';
 
 const sections = [
   {
@@ -54,9 +55,8 @@ export function AccountLayout() {
   async function logout() {
     setBusy(true);
     try {
-      await api.post('/auth/logout');
+      await logoutCurrentSession(queryClient);
     } finally {
-      queryClient.clear();
       navigate('/login');
       setBusy(false);
     }
@@ -66,6 +66,7 @@ export function AccountLayout() {
       <div className="store-container store-account">
         <div className="store-account-heading">
           <h1>My account</h1>
+          <RoleSwitchControl />
           <button onClick={() => void logout()} disabled={busy}>
             <LogOut size={16} />
             {busy ? 'Signing out…' : 'Sign out'}

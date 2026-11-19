@@ -15,13 +15,16 @@ import { useAuth, authQueryKey, type AuthUser } from '../features/auth/auth-stat
 import { PasswordField } from '../features/auth/PasswordField';
 import { errorMessage } from '../features/auth/auth-error';
 import { showToast } from '../../components/feedback/toast';
-import { canAccessWorkspace, workspaceHome, type WorkspaceRole } from './workspace-access';
+import { canAccessWorkspace, roleDestination, type WorkspaceRole } from './workspace-access';
 import './workspace-login.css';
 
 export function WorkspaceLoginGate({ role }: { role: WorkspaceRole }) {
   const auth = useAuth();
   if (auth.isLoading) return <div className="workspace-login-loading">Loading secure sign-in…</div>;
-  if (auth.data) return <Navigate to={workspaceHome(auth.data.role)} replace />;
+  if (auth.data?.roles.length && auth.data.roles.length > 1)
+    return <Navigate to="/select-role" replace />;
+  if (auth.data && canAccessWorkspace(role, auth.data.roles))
+    return <Navigate to={roleDestination(role, auth.data.vendorStatus)} replace />;
   return <WorkspaceLoginPage role={role} />;
 }
 
@@ -44,9 +47,10 @@ function WorkspaceLoginPage({ role }: { role: WorkspaceRole }) {
       const roles = user.roles ?? [user.role];
       const signedInUser: AuthUser = {
         ...user,
+        roles: roles as AuthUser['roles'],
         role: roles.includes('ADMIN') ? 'ADMIN' : roles.includes('VENDOR') ? 'VENDOR' : 'CUSTOMER',
       };
-      if (!canAccessWorkspace(role, signedInUser.role)) {
+      if (!canAccessWorkspace(role, signedInUser.roles)) {
         await api.post('/auth/logout').catch(() => undefined);
         throw new Error(
           admin
@@ -59,7 +63,12 @@ function WorkspaceLoginPage({ role }: { role: WorkspaceRole }) {
     onSuccess: ({ signedInUser, accessToken }) => {
       setStorefrontAccessToken(accessToken);
       queryClient.setQueryData(authQueryKey, signedInUser);
-      navigate(workspaceHome(role), { replace: true });
+      navigate(
+        signedInUser.roles.length > 1
+          ? '/select-role'
+          : roleDestination(role, signedInUser.vendorStatus),
+        { replace: true },
+      );
     },
     onError: (reason) =>
       setError(

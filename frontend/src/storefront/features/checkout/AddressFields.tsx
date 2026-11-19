@@ -1,17 +1,47 @@
 import { indianStates, type AddressDraft } from './address';
+import type { Address } from '../account/account-api';
 
 export function AddressFields({
   address,
   update,
+  savedAddresses,
+  selectedAddressId,
+  selectSavedAddress,
+  startNewAddress,
 }: {
   address: AddressDraft;
   update: (field: keyof AddressDraft, value: string) => void;
+  savedAddresses: Address[];
+  selectedAddressId: string;
+  selectSavedAddress: (address: Address) => void;
+  startNewAddress: () => void;
 }) {
   return (
     <section className="store-address-fields">
       <div className="store-checkout-section-heading">
         <h2>Order details</h2>
       </div>
+      {savedAddresses.length > 0 && (
+        <label className="store-saved-address-select">
+          Use a saved address
+          <select
+            value={selectedAddressId}
+            onChange={(event) => {
+              const id = event.target.value;
+              const saved = savedAddresses.find((item) => item.id === id);
+              if (saved) selectSavedAddress(saved);
+              else startNewAddress();
+            }}
+          >
+            <option value="">Enter a new address</option>
+            {savedAddresses.map((saved) => (
+              <option key={saved.id} value={saved.id}>
+                {saved.label}: {saved.line1}, {saved.city}{saved.isDefault ? ' · Default' : ''}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
       <div className="store-form-grid">
         <label>
           Full name

@@ -12,9 +12,16 @@ type AuthUser = {
   name: string;
   disabledAt: Date | null;
   roles: { role: 'CUSTOMER' | 'VENDOR' | 'ADMIN' }[];
+  vendor?: { status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED' } | null;
 };
 
-export type PublicUser = { id: string; email: string; name: string; roles: string[] };
+export type PublicUser = {
+  id: string;
+  email: string;
+  name: string;
+  roles: string[];
+  vendorStatus?: 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED';
+};
 export type GoogleIdTokenVerifier = (token: string, audience: string) => Promise<JWTPayload>;
 
 const verifyGoogleIdToken: GoogleIdTokenVerifier = async (token, audience) => {
@@ -46,6 +53,7 @@ function publicUser(user: AuthUser): PublicUser {
     email: user.email,
     name: user.name,
     roles: user.roles.map(({ role }) => role),
+    ...(user.vendor ? { vendorStatus: user.vendor.status } : {}),
   };
 }
 
@@ -68,6 +76,35 @@ export class AuthService {
     this.tokens.assertConfigured();
     const email = input.email.trim().toLowerCase();
     const refresh = this.createRefreshSession();
+    const existing = await this.repository.findUserByEmail(email);
+    if (existing) {
+      const passwordMatches = existing.passwordHash
+        ? await Bun.password.verify(input.password, existing.passwordHash)
+        : false;
+      if (existing.disabledAt || !passwordMatches) {
+        throw new AppError(
+          409,
+          'EMAIL_ALREADY_REGISTERED',
+          'An account already exists for this email.',
+        );
+      }
+      if (existing.roles.some(({ role }) => role === 'CUSTOMER')) {
+        throw new AppError(
+          409,
+          'EMAIL_ALREADY_REGISTERED',
+          'An account already exists for this email.',
+        );
+      }
+      const linked = await this.repository.addCustomerRole(existing.id, refresh.session);
+      if (linked.conflict) {
+        throw new AppError(
+          409,
+          'EMAIL_ALREADY_REGISTERED',
+          'An account already exists for this email.',
+        );
+      }
+      return this.createAuthResult(linked.user, linked.sessionId, refresh.refreshToken);
+    }
     const passwordHash = await Bun.password.hash(input.password, {
       algorithm: 'argon2id',
       memoryCost: 65536,
@@ -92,6 +129,17 @@ export class AuthService {
       }
       throw error;
     }
+  }
+
+  async switchRole(userId: string, role: 'CUSTOMER' | 'VENDOR' | 'ADMIN') {
+    const user = await this.repository.findUserRolesAndVendorStatus(userId);
+    if (!user || user.disabledAt)
+      throw new AppError(401, 'AUTH_REQUIRED', 'Authentication is required.');
+    if (!user.roles.some((assigned) => assigned.role === role))
+      throw new AppError(403, 'ROLE_NOT_ASSIGNED', 'This role is not assigned to your account.');
+    if (role === 'VENDOR' && !user.vendor)
+      throw new AppError(403, 'VENDOR_PROFILE_REQUIRED', 'A vendor profile is not available.');
+    return { role, ...(role === 'VENDOR' ? { vendorStatus: user.vendor?.status } : {}) };
   }
 
   async login(input: { email: string; password: string }): Promise<AuthResult> {
@@ -136,6 +184,8 @@ export class AuthService {
     if (identity?.user.disabledAt)
       throw new AppError(403, 'ACCOUNT_DISABLED', 'This account is disabled.');
     const existing = identity ? null : await this.repository.findUserForGoogleLink(email);
+    if (existing?.disabledAt)
+      throw new AppError(403, 'ACCOUNT_DISABLED', 'This account is disabled.');
     if (existing && !existing.emailVerifiedAt)
       throw new AppError(
         409,

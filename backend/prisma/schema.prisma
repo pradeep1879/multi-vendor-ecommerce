@@ -196,6 +196,7 @@ model User {
   createdAt                DateTime                   @default(now())
   updatedAt                DateTime                   @updatedAt
   roles                    UserRole[]
+  customer                 Customer?
   sessions                 Session[]
   externalIdentities       ExternalIdentity[]
   addresses                Address[]
@@ -220,14 +221,22 @@ model User {
   @@index([createdAt])
 }
 
+model Customer {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @unique @db.Uuid
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
 model ExternalIdentity {
-  id                String   @id @default(uuid()) @db.Uuid
-  userId            String   @db.Uuid
-  provider          String   @db.VarChar(32)
-  providerSubject   String   @db.VarChar(255)
-  emailAtLink       String   @db.VarChar(320)
-  createdAt         DateTime @default(now())
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id              String   @id @default(uuid()) @db.Uuid
+  userId          String   @db.Uuid
+  provider        String   @db.VarChar(32)
+  providerSubject String   @db.VarChar(255)
+  emailAtLink     String   @db.VarChar(320)
+  createdAt       DateTime @default(now())
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerSubject])
   @@index([userId, provider])
@@ -399,28 +408,28 @@ model Brand {
 }
 
 model Product {
-  id                  String          @id @default(uuid()) @db.Uuid
-  vendorId            String          @db.Uuid
-  categoryId          String          @db.Uuid
-  brandId             String?         @db.Uuid
-  name                String          @db.VarChar(240)
-  slug                String          @db.VarChar(260)
-  sku                 String          @db.VarChar(100)
-  description         String          @db.Text
+  id                  String              @id @default(uuid()) @db.Uuid
+  vendorId            String              @db.Uuid
+  categoryId          String              @db.Uuid
+  brandId             String?             @db.Uuid
+  name                String              @db.VarChar(240)
+  slug                String              @db.VarChar(260)
+  sku                 String              @db.VarChar(100)
+  description         String              @db.Text
   pricePaise          BigInt
   compareAtPricePaise BigInt?
-  taxCode             String          @db.VarChar(40)
-  status              ProductStatus   @default(DRAFT)
-  statusReason        String?         @db.VarChar(1000)
+  taxCode             String              @db.VarChar(40)
+  status              ProductStatus       @default(DRAFT)
+  statusReason        String?             @db.VarChar(1000)
   attributes          Json?
   submittedAt         DateTime?
   approvedAt          DateTime?
   archivedAt          DateTime?
-  createdAt           DateTime        @default(now())
-  updatedAt           DateTime        @updatedAt
-  vendor              Vendor          @relation(fields: [vendorId], references: [id], onDelete: Restrict)
-  category            Category        @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-  brand               Brand?          @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  vendor              Vendor              @relation(fields: [vendorId], references: [id], onDelete: Restrict)
+  category            Category            @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  brand               Brand?              @relation(fields: [brandId], references: [id], onDelete: SetNull)
   inventory           Inventory?
   variants            ProductVariant[]
   images              ProductImage[]
@@ -440,18 +449,18 @@ model Product {
 }
 
 model ProductVariant {
-  id                  String     @id @default(uuid()) @db.Uuid
-  productId           String     @db.Uuid
-  sku                 String     @db.VarChar(100)
-  name                String     @db.VarChar(160)
-  optionValues        Json       @default("{}")
+  id                  String      @id @default(uuid()) @db.Uuid
+  productId           String      @db.Uuid
+  sku                 String      @db.VarChar(100)
+  name                String      @db.VarChar(160)
+  optionValues        Json        @default("{}")
   pricePaise          BigInt
   compareAtPricePaise BigInt?
-  active              Boolean    @default(true)
-  isDefault           Boolean    @default(false)
-  createdAt           DateTime   @default(now())
-  updatedAt           DateTime   @updatedAt
-  product             Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  active              Boolean     @default(true)
+  isDefault           Boolean     @default(false)
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+  product             Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
   inventory           Inventory?
   cartItems           CartItem[]
   orderItems          OrderItem[]
@@ -566,15 +575,15 @@ model Cart {
 }
 
 model CartItem {
-  id        String   @id @default(uuid()) @db.Uuid
-  cartId    String   @db.Uuid
-  productId String   @db.Uuid
-  variantId String   @db.Uuid
+  id        String         @id @default(uuid()) @db.Uuid
+  cartId    String         @db.Uuid
+  productId String         @db.Uuid
+  variantId String         @db.Uuid
   quantity  Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  cart      Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Product        @relation(fields: [productId], references: [id], onDelete: Restrict)
   variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
 
   @@unique([cartId, variantId])
@@ -674,7 +683,7 @@ model OrderItem {
   review                    Review?
   refundAllocations         RefundAllocation[]
   settlementItem            SettlementItem?
-  returnRequests             ReturnRequest[]
+  returnRequests            ReturnRequest[]
 
   @@index([orderId])
   @@index([vendorOrderId])
@@ -718,17 +727,17 @@ model ReturnRequest {
 }
 
 model Shipment {
-  id                String         @id @default(uuid()) @db.Uuid
-  vendorOrderId     String         @unique @db.Uuid
-  carrier           String?        @db.VarChar(120)
-  trackingReference String?        @db.VarChar(200)
-  trackingUrl       String?        @db.VarChar(2048)
-  status            ShipmentStatus @default(PENDING)
+  id                String          @id @default(uuid()) @db.Uuid
+  vendorOrderId     String          @unique @db.Uuid
+  carrier           String?         @db.VarChar(120)
+  trackingReference String?         @db.VarChar(200)
+  trackingUrl       String?         @db.VarChar(2048)
+  status            ShipmentStatus  @default(PENDING)
   shippedAt         DateTime?
   deliveredAt       DateTime?
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-  vendorOrder       VendorOrder    @relation(fields: [vendorOrderId], references: [id], onDelete: Restrict)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  vendorOrder       VendorOrder     @relation(fields: [vendorOrderId], references: [id], onDelete: Restrict)
   events            ShipmentEvent[]
 
   @@index([status, updatedAt])

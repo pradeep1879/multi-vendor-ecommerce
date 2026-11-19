@@ -148,7 +148,8 @@ authTest('Authentication and session lifecycle', () => {
       data: { user: { id: string; roles: string[] } };
     };
     expect(vendorLogin.status).toBe(200);
-    expect(vendorResult.data.user).toMatchObject({ id: vendorId, roles: ['VENDOR'] });
+    expect(vendorResult.data.user.id).toBe(vendorId);
+    expect(vendorResult.data.user.roles).toEqual(expect.arrayContaining(['VENDOR', 'CUSTOMER']));
 
     const unverifiedEmail = `auth-google-unverified-${crypto.randomUUID()}@example.test`;
     const unverifiedId = crypto.randomUUID();
@@ -216,6 +217,7 @@ authTest('Authentication and session lifecycle', () => {
       name: 'Auth Tester',
       roles: ['CUSTOMER'],
     });
+    expect(await prisma.customer.findUnique({ where: { userId: body.data.user.id } })).toBeTruthy();
     expect(setCookie).toContain('HttpOnly');
     expect(setCookie).toContain('SameSite=Strict');
     expect(rawRefresh).toBeTruthy();
@@ -239,6 +241,48 @@ authTest('Authentication and session lifecycle', () => {
     expect(await me.json()).toMatchObject({
       data: { user: { email: testEmail, roles: ['CUSTOMER'] } },
     });
+  });
+
+  test('customer registration adds CUSTOMER to an existing vendor identity without duplicating the user', async () => {
+    const email = `auth-existing-vendor-${crypto.randomUUID()}@example.test`;
+    const password = 'existing-vendor-password-2026';
+    const vendorId = crypto.randomUUID();
+    await prisma.user.create({
+      data: {
+        id: vendorId,
+        email,
+        normalizedEmail: email,
+        name: 'Existing Vendor',
+        passwordHash: await Bun.password.hash(password),
+        roles: { create: { role: 'VENDOR' } },
+        vendor: {
+          create: {
+            name: 'Existing Vendor Store',
+            slug: `existing-vendor-${crypto.randomUUID()}`,
+            status: 'APPROVED',
+            approvedAt: new Date(),
+          },
+        },
+      },
+    });
+    const response = await fetch(`${baseUrl}/api/v1/auth/register`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ email, password, name: 'Customer Name' }),
+    });
+    const body = (await response.json()) as { data: { user: { id: string; roles: string[] } } };
+    expect(response.status).toBe(201);
+    expect(body.data.user.id).toBe(vendorId);
+    expect(body.data.user.roles).toEqual(expect.arrayContaining(['VENDOR', 'CUSTOMER']));
+    expect(await prisma.user.count({ where: { normalizedEmail: email } })).toBe(1);
+    expect(await prisma.customer.findUnique({ where: { userId: vendorId } })).toBeTruthy();
+
+    const duplicate = await fetch(`${baseUrl}/api/v1/auth/register`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ email, password, name: 'Customer Name' }),
+    });
+    expect(duplicate.status).toBe(409);
   });
 
   test('login errors are generic and refresh rotation detects reuse', async () => {
@@ -472,6 +516,14 @@ authTest('Authentication and session lifecycle', () => {
         passwordHash,
         emailVerifiedAt: new Date(),
         roles: { create: [{ role: 'VENDOR' }] },
+        vendor: {
+          create: {
+            name: 'Workspace Vendor Store',
+            slug: `workspace-vendor-${crypto.randomUUID()}`,
+            status: 'APPROVED',
+            approvedAt: new Date(),
+          },
+        },
       },
     });
     expect(admin.id).not.toBe(vendor.id);
@@ -498,6 +550,65 @@ authTest('Authentication and session lifecycle', () => {
     expect((await check('admin-check', vendorToken)).status).toBe(403);
     expect((await check('admin-check')).status).toBe(401);
     expect((await check('vendor-check')).status).toBe(401);
+  });
+
+  test('role switching accepts assigned roles and rejects unassigned roles', async () => {
+    const email = `auth-multi-role-${crypto.randomUUID()}@example.test`;
+    const password = 'multi-role-password-2026';
+    const user = await prisma.user.create({
+      data: {
+        email,
+        normalizedEmail: email,
+        name: 'Multi Role User',
+        passwordHash: await Bun.password.hash(password),
+        emailVerifiedAt: new Date(),
+        roles: { create: [{ role: 'CUSTOMER' }, { role: 'VENDOR' }] },
+        customer: { create: {} },
+        vendor: {
+          create: {
+            name: 'Multi Role Store',
+            slug: `multi-role-${crypto.randomUUID()}`,
+            status: 'PENDING',
+          },
+        },
+      },
+    });
+    const login = await fetch(`${baseUrl}/api/v1/auth/login`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    const { data } = (await login.json()) as { data: { accessToken: string } };
+    const sessionsBeforeSwitch = await prisma.session.count({ where: { userId: user.id } });
+    const switchRole = (role: string) =>
+      fetch(`${baseUrl}/api/v1/auth/role/switch`, {
+        method: 'POST',
+        headers: {
+          authorization: `Bearer ${data.accessToken}`,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({ role }),
+      });
+    const customer = await switchRole('CUSTOMER');
+    expect(customer.status).toBe(200);
+    expect(await customer.json()).toMatchObject({ data: { role: 'CUSTOMER' } });
+    const vendor = await switchRole('VENDOR');
+    expect(vendor.status).toBe(200);
+    expect(await vendor.json()).toMatchObject({
+      data: { role: 'VENDOR', vendorStatus: 'PENDING' },
+    });
+    const blockedVendorWorkspace = await fetch(`${baseUrl}/api/v1/vendor-check`, {
+      headers: { authorization: `Bearer ${data.accessToken}` },
+    });
+    expect(blockedVendorWorkspace.status).toBe(403);
+    const admin = await switchRole('ADMIN');
+    expect(admin.status).toBe(403);
+    expect(await admin.json()).toMatchObject({ error: { code: 'ROLE_NOT_ASSIGNED' } });
+    expect(await prisma.user.count({ where: { normalizedEmail: email } })).toBe(1);
+    expect(
+      await prisma.user.findUnique({ where: { id: user.id }, select: { roles: true } }),
+    ).toBeTruthy();
+    expect(await prisma.session.count({ where: { userId: user.id } })).toBe(sessionsBeforeSwitch);
   });
 
   test('email verification is one-time and password reset does not expose account existence', async () => {

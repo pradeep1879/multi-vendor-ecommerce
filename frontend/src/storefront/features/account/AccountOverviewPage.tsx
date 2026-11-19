@@ -25,10 +25,10 @@ export function AccountOverviewPage() {
             action={
               <Link
                 to="/"
-                className="inline-flex h-10 items-center gap-2 bg-[#34372f] px-4 text-sm text-white hover:bg-[#59604c]"
+                className="inline-flex h-10 items-center gap-2 bg-[#99ee0f] px-4 text-sm text-white hover:bg-[#a1f10c]"
               >
                 Continue shopping
-                <ArrowRight size={14} />
+                {/* <ArrowRight size={14} /> */}
               </Link>
             }
           />

@@ -5,6 +5,7 @@ import type { Product } from '../types/catalog';
 export type CartLine = {
   product: Product;
   variantId: string;
+  cartItemId?: string;
   variantName: string;
   sku: string;
   pricePaise: number;

@@ -212,7 +212,7 @@ function toAccountOrder(value: TargetOrder): AccountOrder {
     shippingAddress: value.shippingAddress,
     createdAt: value.createdAt,
     updatedAt: value.createdAt,
-    items: value.items.map((item) => ({
+    items: (Array.isArray(value.items) ? value.items : []).map((item) => ({
       id: String(item.id),
       productName: String(item.productNameSnapshot ?? ''),
       variantName: String(item.variantNameSnapshot ?? ''),
@@ -271,7 +271,12 @@ const addressBody = (value: Partial<Omit<Address, 'id'>>) => ({
   ...(value.city !== undefined ? { city: value.city } : {}),
   ...(value.state !== undefined ? { region: value.state } : {}),
   ...(value.pincode !== undefined ? { postalCode: value.pincode } : {}),
-  countryCode: value.country ?? 'IN',
+  // The address form is India-specific and stores the display name "India".
+  // The API expects an ISO alpha-2 country code.
+  countryCode:
+    value.country?.trim().toLowerCase() === 'india'
+      ? 'IN'
+      : (value.country?.trim().toUpperCase().slice(0, 2) || 'IN'),
   ...(value.isDefault !== undefined ? { isDefault: value.isDefault } : {}),
 });
 export const accountApi = {
@@ -358,13 +363,14 @@ export const accountApi = {
   },
   requestEmailVerification: () => api.post('/auth/email-verification'),
   orders: async (params: Record<string, string | number | undefined>) => {
-    const result = await data<{ orders: TargetOrder[] }>(api.get('/orders'));
+    const result = await data<{ orders?: TargetOrder[] }>(api.get('/orders'));
+    const orderRows = Array.isArray(result.orders) ? result.orders : [];
     const search = String(params.q ?? '')
       .trim()
       .toLocaleLowerCase();
     const from = params.from ? new Date(`${params.from}T00:00:00`) : null;
     const to = params.to ? new Date(`${params.to}T23:59:59.999`) : null;
-    const all = result.orders
+    const all = orderRows
       .map(toAccountOrder)
       .filter((order) => !params.status || order.status === params.status)
       .filter((order) => !params.paymentStatus || order.paymentStatus === params.paymentStatus)
@@ -408,10 +414,10 @@ export const accountApi = {
     await api.post(`/orders/${id}/cancel`, { reason: 'Customer requested cancellation' });
     return accountApi.order(id);
   },
-  addresses: async () =>
-    (await data<{ addresses: BackendAddress[] }>(api.get('/me/addresses'))).addresses.map(
-      toAddress,
-    ),
+  addresses: async () => {
+    const result = await data<{ addresses?: BackendAddress[] }>(api.get('/me/addresses'));
+    return (Array.isArray(result.addresses) ? result.addresses : []).map(toAddress);
+  },
   addAddress: async (input: Omit<Address, 'id'>) =>
     toAddress(
       (await data<{ address: BackendAddress }>(api.post('/me/addresses', addressBody(input))))
@@ -438,9 +444,11 @@ export const accountApi = {
       ).address,
     ),
   wishlist: async (): Promise<WishlistItem[]> => {
-    const rows = await data<
-      Array<{ id: string; productId: string; product: Record<string, unknown> }>
+    const result = await data<
+      | Array<{ id: string; productId: string; product: Record<string, unknown> }>
+      | { items?: Array<{ id: string; productId: string; product: Record<string, unknown> }> }
     >(api.get('/wishlist'));
+    const rows = Array.isArray(result) ? result : Array.isArray(result.items) ? result.items : [];
     return rows.map((row) => {
       const product = row.product as Record<string, unknown>;
       const brand = product.brand as { name?: string } | null;

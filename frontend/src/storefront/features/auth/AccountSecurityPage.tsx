@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
-import { api, setStorefrontAccessToken } from '../../api/client';
+import { api } from '../../api/client';
 import { Button } from '../../components/ui/button';
 import { PasswordField } from './PasswordField';
 import { PasswordStrength } from './PasswordStrength';
 import { isStrongPassword } from './password-policy';
 import { errorMessage } from './auth-error';
 import { AuthError } from './AuthFields';
+import { logoutCurrentSession } from './auth-state';
 
 export function AccountSecurityPage() {
   const [current, setCurrent] = useState('');
@@ -32,9 +33,7 @@ export function AccountSecurityPage() {
       setPassword('');
       setConfirm('');
       setMessage('Password updated. Sign in again to continue.');
-      await api.post('/auth/logout');
-      setStorefrontAccessToken('');
-      queryClient.clear();
+      await logoutCurrentSession(queryClient);
       navigate('/login');
     } catch (reason) {
       setError(errorMessage(reason, 'Please try again.'));
@@ -45,8 +44,7 @@ export function AccountSecurityPage() {
 
   async function signOutAll() {
     await api.post('/auth/logout-all');
-    setStorefrontAccessToken('');
-    queryClient.clear();
+    await logoutCurrentSession(queryClient);
     navigate('/login');
   }
 

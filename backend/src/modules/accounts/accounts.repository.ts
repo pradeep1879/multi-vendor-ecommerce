@@ -151,6 +151,43 @@ export class AccountsRepository {
       const application = await tx.vendorApplication.create({
         data: { applicantId, ...data },
       });
+      const slugBase =
+        data.businessName
+          .toLowerCase()
+          .normalize('NFKD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-|-$/g, '')
+          .slice(0, 180) || 'vendor';
+      const slug = `${slugBase}-${application.id.slice(0, 8)}`;
+      if (existingVendor) {
+        await tx.vendor.update({
+          where: { id: existingVendor.id },
+          data: {
+            applicationId: application.id,
+            name: data.businessName,
+            slug,
+            status: 'PENDING',
+            approvedAt: null,
+            suspendedAt: null,
+          },
+        });
+      } else {
+        await tx.vendor.create({
+          data: {
+            ownerId: applicantId,
+            applicationId: application.id,
+            name: data.businessName,
+            slug,
+            status: 'PENDING',
+          },
+        });
+      }
+      await tx.userRole.upsert({
+        where: { userId_role: { userId: applicantId, role: 'VENDOR' } },
+        create: { userId: applicantId, role: 'VENDOR' },
+        update: {},
+      });
       await tx.auditLog.create({
         data: {
           actorId: applicantId,
@@ -236,7 +273,7 @@ export class AccountsRepository {
           decisionReason: input.reason,
         },
       });
-      let vendor = null;
+      let vendor = await tx.vendor.findUnique({ where: { ownerId: application.applicantId } });
       if (input.decision === 'APPROVED') {
         const slugBase =
           application.businessName
@@ -246,20 +283,37 @@ export class AccountsRepository {
             .replace(/[^a-z0-9]+/g, '-')
             .replace(/^-|-$/g, '')
             .slice(0, 180) || 'vendor';
-        vendor = await tx.vendor.create({
-          data: {
-            ownerId: application.applicantId,
-            applicationId: application.id,
-            name: application.businessName,
-            slug: `${slugBase}-${application.id.slice(0, 8)}`,
-            status: 'APPROVED',
-            approvedAt: new Date(),
-          },
-        });
+        vendor = vendor
+          ? await tx.vendor.update({
+              where: { id: vendor.id },
+              data: {
+                applicationId: application.id,
+                name: application.businessName,
+                slug: `${slugBase}-${application.id.slice(0, 8)}`,
+                status: 'APPROVED',
+                approvedAt: new Date(),
+                suspendedAt: null,
+              },
+            })
+          : await tx.vendor.create({
+              data: {
+                ownerId: application.applicantId,
+                applicationId: application.id,
+                name: application.businessName,
+                slug: `${slugBase}-${application.id.slice(0, 8)}`,
+                status: 'APPROVED',
+                approvedAt: new Date(),
+              },
+            });
         await tx.userRole.upsert({
           where: { userId_role: { userId: application.applicantId, role: 'VENDOR' } },
           create: { userId: application.applicantId, role: 'VENDOR' },
           update: {},
+        });
+      } else if (vendor) {
+        vendor = await tx.vendor.update({
+          where: { id: vendor.id },
+          data: { status: 'REJECTED', approvedAt: null, suspendedAt: null },
         });
       }
       await tx.auditLog.create({

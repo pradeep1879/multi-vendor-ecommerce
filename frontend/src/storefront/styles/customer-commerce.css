@@ -234,6 +234,21 @@
 .store-checkout-section-heading {
   margin-bottom: 12px;
 }
+.store-saved-address-select {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+.store-saved-address-select select {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #aaa;
+  border-radius: 0;
+  background: white;
+  color: var(--store-ink);
+}
 .customer-store .store-checkout-section-heading h2 {
   margin: 0 !important;
   font-size: 20px;

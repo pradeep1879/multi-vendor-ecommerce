@@ -24,8 +24,7 @@ export * as $Enums from './enums.ts'
 export * from "./enums.ts"
 /**
  * ## Prisma Client
- * 
- * Type-safe database client for TypeScript
+ *  * Type-safe database client for TypeScript
  * @example
  * ```
  * const prisma = new PrismaClient({
@@ -34,8 +33,7 @@ export * from "./enums.ts"
  * // Fetch zero or more Users
  * const users = await prisma.user.findMany()
  * ```
- * 
- * Read more in our [docs](https://pris.ly/d/client).
+ *  * Read more in our [docs](https://pris.ly/d/client).
  */
 export const PrismaClient = $Class.getPrismaClientClass()
 export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts extends Prisma.PrismaClientOptions["omit"] = Prisma.PrismaClientOptions["omit"], ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = $Class.PrismaClient<LogOpts, OmitOpts, ExtArgs>
@@ -43,241 +41,197 @@ export { Prisma }
 
 /**
  * Model User
- * 
- */
+ *  */
 export type User = Prisma.UserModel
 /**
+ * Model Customer
+ *  */
+export type Customer = Prisma.CustomerModel
+/**
  * Model ExternalIdentity
- * 
- */
+ *  */
 export type ExternalIdentity = Prisma.ExternalIdentityModel
 /**
  * Model UserRole
- * 
- */
+ *  */
 export type UserRole = Prisma.UserRoleModel
 /**
  * Model Session
- * 
- */
+ *  */
 export type Session = Prisma.SessionModel
 /**
  * Model VerificationToken
- * 
- */
+ *  */
 export type VerificationToken = Prisma.VerificationTokenModel
 /**
  * Model Address
- * 
- */
+ *  */
 export type Address = Prisma.AddressModel
 /**
  * Model VendorApplication
- * 
- */
+ *  */
 export type VendorApplication = Prisma.VendorApplicationModel
 /**
  * Model Vendor
- * 
- */
+ *  */
 export type Vendor = Prisma.VendorModel
 /**
  * Model VendorAddress
- * 
- */
+ *  */
 export type VendorAddress = Prisma.VendorAddressModel
 /**
  * Model Category
- * 
- */
+ *  */
 export type Category = Prisma.CategoryModel
 /**
  * Model Brand
- * 
- */
+ *  */
 export type Brand = Prisma.BrandModel
 /**
  * Model Product
- * 
- */
+ *  */
 export type Product = Prisma.ProductModel
 /**
  * Model ProductVariant
- * 
- */
+ *  */
 export type ProductVariant = Prisma.ProductVariantModel
 /**
  * Model SearchOutboxEvent
- * 
- */
+ *  */
 export type SearchOutboxEvent = Prisma.SearchOutboxEventModel
 /**
  * Model ProductImage
- * 
- */
+ *  */
 export type ProductImage = Prisma.ProductImageModel
 /**
  * Model Inventory
- * 
- */
+ *  */
 export type Inventory = Prisma.InventoryModel
 /**
  * Model InventoryMovement
- * 
- */
+ *  */
 export type InventoryMovement = Prisma.InventoryMovementModel
 /**
  * Model TaxRule
- * 
- */
+ *  */
 export type TaxRule = Prisma.TaxRuleModel
 /**
  * Model CommissionRule
- * 
- */
+ *  */
 export type CommissionRule = Prisma.CommissionRuleModel
 /**
  * Model Cart
- * 
- */
+ *  */
 export type Cart = Prisma.CartModel
 /**
  * Model CartItem
- * 
- */
+ *  */
 export type CartItem = Prisma.CartItemModel
 /**
  * Model Order
- * 
- */
+ *  */
 export type Order = Prisma.OrderModel
 /**
  * Model VendorOrder
- * 
- */
+ *  */
 export type VendorOrder = Prisma.VendorOrderModel
 /**
  * Model OrderItem
- * 
- */
+ *  */
 export type OrderItem = Prisma.OrderItemModel
 /**
  * Model WishlistItem
- * 
- */
+ *  */
 export type WishlistItem = Prisma.WishlistItemModel
 /**
  * Model ReturnRequest
- * 
- */
+ *  */
 export type ReturnRequest = Prisma.ReturnRequestModel
 /**
  * Model Shipment
- * 
- */
+ *  */
 export type Shipment = Prisma.ShipmentModel
 /**
  * Model ShipmentEvent
- * 
- */
+ *  */
 export type ShipmentEvent = Prisma.ShipmentEventModel
 /**
  * Model OrderStatusHistory
- * 
- */
+ *  */
 export type OrderStatusHistory = Prisma.OrderStatusHistoryModel
 /**
  * Model VendorOrderStatusHistory
- * 
- */
+ *  */
 export type VendorOrderStatusHistory = Prisma.VendorOrderStatusHistoryModel
 /**
  * Model Payment
- * 
- */
+ *  */
 export type Payment = Prisma.PaymentModel
 /**
  * Model PaymentAttempt
- * 
- */
+ *  */
 export type PaymentAttempt = Prisma.PaymentAttemptModel
 /**
  * Model Refund
- * 
- */
+ *  */
 export type Refund = Prisma.RefundModel
 /**
  * Model RefundAllocation
- * 
- */
+ *  */
 export type RefundAllocation = Prisma.RefundAllocationModel
 /**
  * Model VendorSettlement
- * 
- */
+ *  */
 export type VendorSettlement = Prisma.VendorSettlementModel
 /**
  * Model SettlementItem
- * 
- */
+ *  */
 export type SettlementItem = Prisma.SettlementItemModel
 /**
  * Model Coupon
- * 
- */
+ *  */
 export type Coupon = Prisma.CouponModel
 /**
  * Model CouponProduct
- * 
- */
+ *  */
 export type CouponProduct = Prisma.CouponProductModel
 /**
  * Model CouponCategory
- * 
- */
+ *  */
 export type CouponCategory = Prisma.CouponCategoryModel
 /**
  * Model CouponRedemption
- * 
- */
+ *  */
 export type CouponRedemption = Prisma.CouponRedemptionModel
 /**
  * Model Review
- * 
- */
+ *  */
 export type Review = Prisma.ReviewModel
 /**
  * Model AccountNotification
- * 
- */
+ *  */
 export type AccountNotification = Prisma.AccountNotificationModel
 /**
  * Model NotificationPreference
- * 
- */
+ *  */
 export type NotificationPreference = Prisma.NotificationPreferenceModel
 /**
  * Model AuditLog
- * 
- */
+ *  */
 export type AuditLog = Prisma.AuditLogModel
 /**
  * Model WebhookEvent
- * 
- */
+ *  */
 export type WebhookEvent = Prisma.WebhookEventModel
 /**
  * Model IdempotencyRecord
- * 
- */
+ *  */
 export type IdempotencyRecord = Prisma.IdempotencyRecordModel
 /**
  * Model LedgerTransaction
- * 
- */
+ *  */
 export type LedgerTransaction = Prisma.LedgerTransactionModel
 /**
  * Model LedgerEntry
- * 
- */
+ *  */
 export type LedgerEntry = Prisma.LedgerEntryModel

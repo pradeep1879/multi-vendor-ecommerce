@@ -243,8 +243,33 @@ export class RazorpayGateway implements PaymentGateway {
       },
       signal: AbortSignal.timeout(10_000),
     });
-    if (!response.ok)
-      throw new AppError(502, 'PAYMENT_PROVIDER_ERROR', 'Payment provider request failed.');
+    if (!response.ok) {
+      const payload: unknown = await response.json().catch(() => undefined);
+      const providerError =
+        typeof payload === 'object' && payload !== null && 'error' in payload
+          ? (payload as { error?: { code?: unknown; description?: unknown; field?: unknown } }).error
+          : undefined;
+      const description =
+        typeof providerError?.description === 'string'
+          ? providerError.description.slice(0, 300)
+          : 'Payment provider request failed.';
+      console.error(
+        JSON.stringify({
+          level: 'error',
+          event: 'payment_provider_request_failed',
+          provider: 'RAZORPAY',
+          status: response.status,
+          code: typeof providerError?.code === 'string' ? providerError.code : undefined,
+          field: typeof providerError?.field === 'string' ? providerError.field : undefined,
+          description,
+        }),
+      );
+      throw new AppError(
+        502,
+        'PAYMENT_PROVIDER_ERROR',
+        `Razorpay rejected the payment request: ${description}`,
+      );
+    }
     return (await response.json()) as T;
   }
 

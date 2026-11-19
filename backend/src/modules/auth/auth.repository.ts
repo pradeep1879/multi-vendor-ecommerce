@@ -13,19 +13,22 @@ export class AuthRepository {
   findUserByEmail(normalizedEmail: string) {
     return this.prisma().user.findUnique({
       where: { normalizedEmail },
-      include: { roles: true },
+      include: { roles: true, vendor: { select: { status: true } } },
     });
   }
 
   findGoogleIdentity(providerSubject: string) {
     return this.prisma().externalIdentity.findUnique({
       where: { provider_providerSubject: { provider: 'GOOGLE', providerSubject } },
-      include: { user: { include: { roles: true } } },
+      include: { user: { include: { roles: true, vendor: { select: { status: true } } } } },
     });
   }
 
   findUserForGoogleLink(normalizedEmail: string) {
-    return this.prisma().user.findUnique({ where: { normalizedEmail }, include: { roles: true } });
+    return this.prisma().user.findUnique({
+      where: { normalizedEmail },
+      include: { roles: true, vendor: { select: { status: true } } },
+    });
   }
 
   async createGoogleSession(input: {
@@ -40,18 +43,18 @@ export class AuthRepository {
         where: {
           provider_providerSubject: { provider: 'GOOGLE', providerSubject: input.providerSubject },
         },
-        include: { user: { include: { roles: true } } },
+        include: { user: { include: { roles: true, vendor: { select: { status: true } } } } },
       });
       let user =
         identity?.user ??
         (input.userId
           ? await tx.user.findUniqueOrThrow({
               where: { id: input.userId },
-              include: { roles: true },
+              include: { roles: true, vendor: { select: { status: true } } },
             })
           : await tx.user.findUnique({
               where: { normalizedEmail: input.email },
-              include: { roles: true },
+              include: { roles: true, vendor: { select: { status: true } } },
             }));
       if (!user) {
         user = await tx.user.create({
@@ -62,11 +65,22 @@ export class AuthRepository {
             passwordHash: null,
             emailVerifiedAt: new Date(),
             roles: { create: { role: 'CUSTOMER' } },
+            customer: { create: {} },
           },
-          include: { roles: true },
+          include: { roles: true, vendor: { select: { status: true } } },
         });
       }
       if (user.disabledAt) throw new Error('Google account is disabled.');
+      await tx.userRole.upsert({
+        where: { userId_role: { userId: user.id, role: 'CUSTOMER' } },
+        create: { userId: user.id, role: 'CUSTOMER' },
+        update: {},
+      });
+      await tx.customer.upsert({
+        where: { userId: user.id },
+        create: { userId: user.id },
+        update: {},
+      });
       if (!identity)
         await tx.externalIdentity.create({
           data: {
@@ -77,6 +91,10 @@ export class AuthRepository {
           },
         });
       const session = await tx.session.create({ data: { userId: user.id, ...input.session } });
+      user = await tx.user.findUniqueOrThrow({
+        where: { id: user.id },
+        include: { roles: true, vendor: { select: { status: true } } },
+      });
       await tx.auditLog.create({
         data: {
           actorId: user.id,
@@ -104,6 +122,7 @@ export class AuthRepository {
           name: input.name,
           passwordHash: input.passwordHash,
           roles: { create: { role: 'CUSTOMER' } },
+          customer: { create: {} },
         },
       });
       const session = await tx.session.create({
@@ -111,12 +130,49 @@ export class AuthRepository {
       });
       const savedUser = await tx.user.findUniqueOrThrow({
         where: { id: user.id },
-        include: { roles: true },
+        include: { roles: true, vendor: { select: { status: true } } },
       });
       await tx.auditLog.create({
         data: { actorId: user.id, action: 'auth.register', targetType: 'user', targetId: user.id },
       });
       return { user: savedUser, sessionId: session.id };
+    });
+  }
+
+  addCustomerRole(userId: string, sessionSeed: SessionSeed) {
+    return this.prisma().$transaction(async (tx) => {
+      const existingRole = await tx.userRole.findUnique({
+        where: { userId_role: { userId, role: 'CUSTOMER' } },
+        select: { id: true },
+      });
+      if (existingRole) return { conflict: true as const };
+      await tx.userRole.create({ data: { userId, role: 'CUSTOMER' } });
+      await tx.customer.upsert({ where: { userId }, create: { userId }, update: {} });
+      const session = await tx.session.create({ data: { userId, ...sessionSeed } });
+      const user = await tx.user.findUniqueOrThrow({
+        where: { id: userId },
+        include: { roles: true, vendor: { select: { status: true } } },
+      });
+      await tx.auditLog.create({
+        data: {
+          actorId: userId,
+          action: 'auth.role.add_customer',
+          targetType: 'session',
+          targetId: session.id,
+        },
+      });
+      return { conflict: false as const, user, sessionId: session.id };
+    });
+  }
+
+  findUserRolesAndVendorStatus(userId: string) {
+    return this.prisma().user.findUnique({
+      where: { id: userId },
+      select: {
+        disabledAt: true,
+        roles: { select: { role: true } },
+        vendor: { select: { status: true } },
+      },
     });
   }
 
@@ -138,7 +194,7 @@ export class AuthRepository {
   findSessionByTokenHash(tokenHash: string) {
     return this.prisma().session.findUnique({
       where: { tokenHash },
-      include: { user: { include: { roles: true } } },
+      include: { user: { include: { roles: true, vendor: { select: { status: true } } } } },
     });
   }
 
@@ -177,7 +233,7 @@ export class AuthRepository {
       });
       const user = await tx.user.findUniqueOrThrow({
         where: { id: input.userId },
-        include: { roles: true },
+        include: { roles: true, vendor: { select: { status: true } } },
       });
       return { user, sessionId: next.id };
     });
@@ -241,7 +297,7 @@ export class AuthRepository {
         expiresAt: { gt: now },
         user: { disabledAt: null },
       },
-      include: { user: { include: { roles: true } } },
+      include: { user: { include: { roles: true, vendor: { select: { status: true } } } } },
     });
   }
 

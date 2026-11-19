@@ -134,6 +134,14 @@ export function createAuthController(service: AuthService, environment: Environm
     sendData(response, { user: context.user });
   };
 
+  const switchRole: RequestHandler = async (_request, response) => {
+    const context = getAuthContext(response);
+    const body = getValidatedRequest<{ body: { role: 'CUSTOMER' | 'VENDOR' | 'ADMIN' } }>(
+      response,
+    ).body;
+    sendData(response, await service.switchRole(context.userId, body.role));
+  };
+
   return {
     register,
     login,
@@ -146,5 +154,6 @@ export function createAuthController(service: AuthService, environment: Environm
     requestEmailVerification,
     confirmEmailVerification,
     me,
+    switchRole,
   };
 }

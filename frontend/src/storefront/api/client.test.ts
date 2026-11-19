@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import type { AxiosAdapter } from 'axios';
 import { api } from './client';
+import { accountApi } from '../features/account/account-api';
 
 describe('customer storefront API contract adapters', () => {
   test('maps catalog filters and response pagination to the merged API', async () => {
@@ -44,5 +45,40 @@ describe('customer storefront API contract adapters', () => {
       { url: '/auth/google', data: { idToken: 'verified-id-token' } },
       { url: '/catalog/products/rose-water-by-brand', data: undefined },
     ]);
+  });
+
+  test('reads wishlist rows from the backend items envelope', async () => {
+    const originalAdapter = api.defaults.adapter;
+    api.defaults.adapter = (async (config) => ({
+      data: {
+        data: {
+          items: [
+            {
+              id: 'wishlist-1',
+              productId: 'product-1',
+              product: {
+                name: 'Calm Cream',
+                slug: 'calm-cream',
+                status: 'ACTIVE',
+                brand: { name: 'Maison' },
+                images: [],
+                variants: [],
+              },
+            },
+          ],
+        },
+      },
+      status: 200,
+      statusText: 'OK',
+      headers: {},
+      config,
+    })) as AxiosAdapter;
+    try {
+      expect(await accountApi.wishlist()).toMatchObject([
+        { id: 'wishlist-1', productId: 'product-1', name: 'Calm Cream' },
+      ]);
+    } finally {
+      api.defaults.adapter = originalAdapter;
+    }
   });
 });

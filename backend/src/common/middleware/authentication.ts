@@ -6,7 +6,14 @@ export type AuthContext = {
   userId: string;
   sessionId: string;
   roles: string[];
-  user: { id: string; email: string; name: string; roles: string[] };
+  vendorStatus?: 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED';
+  user: {
+    id: string;
+    email: string;
+    name: string;
+    roles: string[];
+    vendorStatus?: 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED';
+  };
 };
 
 export function authentication(service: AuthService): RequestHandler {
@@ -19,6 +26,8 @@ export function authentication(service: AuthService): RequestHandler {
     }
     try {
       response.locals.auth = await service.authenticateAccessToken(match[1]);
+      const context = response.locals.auth as AuthContext;
+      context.vendorStatus = context.user.vendorStatus;
       next();
     } catch (error: unknown) {
       next(error);
@@ -37,6 +46,21 @@ export function requireRole(...roles: string[]): RequestHandler {
     if (!Array.isArray(grantedRoles) || !roles.some((role) => grantedRoles.includes(role))) {
       next(new AppError(403, 'FORBIDDEN', 'You are not allowed to perform this action.'));
       return;
+    }
+    if (roles.length === 1 && roles[0] === 'VENDOR') {
+      const context = response.locals.auth as AuthContext;
+      if (context.vendorStatus !== 'APPROVED') {
+        next(
+          new AppError(
+            403,
+            context.vendorStatus === 'SUSPENDED' ? 'VENDOR_SUSPENDED' : 'VENDOR_NOT_APPROVED',
+            context.vendorStatus === 'SUSPENDED'
+              ? 'This vendor account is suspended.'
+              : 'An approved vendor account is required.',
+          ),
+        );
+        return;
+      }
     }
     next();
   };

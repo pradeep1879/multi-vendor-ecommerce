@@ -6,11 +6,13 @@ export function AuthLayout({
   title,
   eyebrow = 'A GOOD PLACE TO BEGIN',
   description,
+  className = '',
   children,
 }: {
   title: ReactNode;
   eyebrow?: string;
   description?: string;
+  className?: string;
   children: ReactNode;
 }) {
   const location = useLocation();
@@ -28,7 +30,7 @@ export function AuthLayout({
     );
   return (
     <StoreShell>
-      <section className="store-auth">
+      <section className={`store-auth ${className}`.trim()}>
         <h1>{title}</h1>
         {description && <p className="store-auth-description">{description}</p>}
         {children}
