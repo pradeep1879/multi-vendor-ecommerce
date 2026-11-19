@@ -295,25 +295,6 @@
   min-height: 48px;
   margin-top: 0;
 }
-.customer-store .signup-social .google-auth-wrap,
-.customer-store .store-auth-login > .google-auth-wrap {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-}
-.customer-store .signup-social .google-auth-wrap > div,
-.customer-store .store-auth-login > .google-auth-wrap > div {
-  width: min(100%, 396px);
-  max-width: 396px;
-}
-.customer-store .signup-social .google-auth-button,
-.customer-store .store-auth-login .google-auth-button {
-  width: min(100%, 396px);
-}
-.customer-store .signup-social iframe,
-.customer-store .store-auth-login iframe {
-  max-width: 100%;
-}
 .customer-store .signup-social .auth-divider {
   margin: 14px 0 12px;
 }

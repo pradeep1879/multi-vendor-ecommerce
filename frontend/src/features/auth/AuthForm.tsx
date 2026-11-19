@@ -21,7 +21,7 @@ declare global {
           }) => void;
           renderButton: (
             element: HTMLElement,
-            options: { theme: string; size: string; width: number },
+            options: { theme: string; size: string; width: number; type?: string; text?: string },
           ) => void;
         };
       };
@@ -46,6 +46,8 @@ export function AuthForm({ mode, onModeChange, onSubmit, busy, onGoogleCredentia
         },
       });
       window.google.accounts.id.renderButton(googleButton.current, {
+        type: 'standard',
+        text: 'signin_with',
         theme: 'outline',
         size: 'large',
         width: 320,

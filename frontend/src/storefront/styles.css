@@ -1391,12 +1391,22 @@ button {
   flex: 1;
 }
 .google-auth-wrap {
-  display: grid;
-  justify-items: center;
+  display: flex;
+  justify-content: center;
+  width: 100%;
   min-height: 42px;
 }
+.google-auth-frame {
+  width: min(396px, 100%);
+  max-width: 396px;
+  margin-inline: auto;
+}
 .google-auth-button {
+  width: 100%;
   min-height: 40px;
+  max-width: 100%;
+}
+.google-auth-frame iframe {
   max-width: 100%;
 }
 .auth-hint {
