@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { api, setStorefrontAccessToken } from '../../api/client';
 
@@ -24,6 +25,14 @@ export function normalizeAuthUser(user: AuthUserResponse, activeRole?: AuthRole)
   return { ...user, role };
 }
 export const authQueryKey = ['auth', 'me'] as const;
+function isUnauthenticatedSession(error: unknown) {
+  return (
+    axios.isAxiosError<{ error?: { code?: string } }>(error) &&
+    error.response?.status === 401 &&
+    ['AUTH_REQUIRED', 'INVALID_SESSION'].includes(error.response.data?.error?.code ?? '')
+  );
+}
+
 export async function logoutCurrentSession(queryClient: { clear: () => void }) {
   try {
     await api.post('/auth/logout');
@@ -36,17 +45,23 @@ export async function logoutCurrentSession(queryClient: { clear: () => void }) {
 export function useAuth() {
   return useQuery({
     queryKey: authQueryKey,
-    queryFn: async ({ signal }) => {
-      const result = (
-        await api.get<{
-          data: {
-            user: Omit<AuthUser, 'role' | 'roles'> & { roles: AuthRole[] };
-            accessToken?: string;
-          };
-        }>('/auth/me', { signal, timeout: 8000 })
-      ).data.data;
-      if (result.accessToken) setStorefrontAccessToken(result.accessToken);
-      return normalizeAuthUser(result.user);
+    queryFn: async ({ signal }): Promise<AuthUser | null> => {
+      try {
+        const result = (
+          await api.get<{
+            data: {
+              user: Omit<AuthUser, 'role' | 'roles'> & { roles: AuthRole[] };
+              accessToken?: string;
+            };
+          }>('/auth/me', { signal, timeout: 8000 })
+        ).data.data;
+        if (result.accessToken) setStorefrontAccessToken(result.accessToken);
+        return normalizeAuthUser(result.user);
+      } catch (error) {
+        // A missing or expired session is the normal signed-out state on guest routes.
+        if (isUnauthenticatedSession(error)) return null;
+        throw error;
+      }
     },
     retry: false,
     staleTime: 30_000,

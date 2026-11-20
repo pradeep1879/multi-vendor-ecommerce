@@ -106,6 +106,21 @@ function Authenticated({ children }: { children: ReactNode }) {
 function GuestOnly({ children }: { children: ReactNode }) {
   const auth = useAuth();
   const location = useLocation();
+  if (auth.isError)
+    return (
+      <main className="auth-loading" role="alert">
+        <p>We couldn’t check your session. Please try again.</p>
+        <button type="button" onClick={() => void auth.refetch()}>
+          Retry
+        </button>
+      </main>
+    );
+  if (auth.isLoading)
+    return (
+      <div className="auth-loading" role="status">
+        Checking session…
+      </div>
+    );
   if (!auth.data) return <>{children}</>;
   const state = location.state as { from?: string } | null;
   const returnTo = safeCustomerReturnPath(
@@ -119,31 +134,6 @@ function GuestOnly({ children }: { children: ReactNode }) {
       state={destination === '/select-role' && returnTo ? { from: returnTo } : undefined}
     />
   );
-}
-
-function LoginRoute() {
-  const auth = useAuth();
-  const location = useLocation();
-  const requestedPath = (location.state as { from?: string } | null)?.from ?? '';
-  const nextPath = new URLSearchParams(location.search).get('next') ?? '';
-  const staffSwitch =
-    requestedPath.startsWith('/admin') ||
-    requestedPath.startsWith('/vendor') ||
-    nextPath.startsWith('/admin') ||
-    nextPath.startsWith('/vendor');
-  if (auth.data) {
-    if (staffSwitch) return <LoginForm currentUser={auth.data} />;
-    const returnTo = safeCustomerReturnPath(requestedPath || nextPath);
-    const destination = authenticatedLanding(auth.data, returnTo);
-    return (
-      <Navigate
-        to={destination}
-        replace
-        state={destination === '/select-role' && returnTo ? { from: returnTo } : undefined}
-      />
-    );
-  }
-  return <LoginForm />;
 }
 
 export default function App() {
@@ -197,8 +187,15 @@ export default function App() {
               </Authenticated>
             }
           />
-          {/* A valid customer session returns to the storefront; recovery stays independent. */}
-          <Route path="/login" element={<LoginRoute />} />
+          {/* Signed-in users are redirected away from customer sign-in and registration. */}
+          <Route
+            path="/login"
+            element={
+              <GuestOnly>
+                <LoginForm />
+              </GuestOnly>
+            }
+          />
           <Route
             path="/signup"
             element={
@@ -232,8 +229,7 @@ export default function App() {
             <Route path="notifications" element={<NotificationsPage />} />
             <Route path="preferences" element={<PreferencesPage />} />
           </Route>
-          {/* Staff sign-in must remain reachable when a customer session is already active,
-        so an administrator can switch accounts without the guest guard bouncing away. */}
+          {/* Workspace sign-in pages also redirect any active session to its workspace. */}
           <Route path="/admin/login" element={<WorkspaceLoginGate role="ADMIN" />} />
           <Route path="/vendor/login" element={<WorkspaceLoginGate role="VENDOR" />} />
           <Route path="/vendor/application-status" element={<VendorApplicationStatusPage />} />

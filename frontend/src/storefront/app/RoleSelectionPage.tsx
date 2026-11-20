@@ -26,18 +26,19 @@ const roleDetails: Record<AuthRole, { title: string; description: string; icon: 
 export function RoleSwitchControl() {
   const auth = useAuth();
   const changeRole = useRoleSwitch();
-  if (!auth.data || auth.data.roles.length < 2) return null;
+  const user = auth.data;
+  if (!user || user.roles.length < 2) return null;
   return (
     <details className="role-switch-control">
       <summary>Switch workspace</summary>
       <div className="role-switch-menu">
-        {auth.data.roles.map((role) => {
+        {user.roles.map((role) => {
           const Icon = roleDetails[role].icon;
           return (
             <button
               type="button"
               key={role}
-              disabled={changeRole.isPending || auth.data.role === role}
+              disabled={changeRole.isPending || user.role === role}
               onClick={() => changeRole.mutate(role)}
             >
               <Icon size={17} aria-hidden="true" />

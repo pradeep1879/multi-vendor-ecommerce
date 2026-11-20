@@ -11,16 +11,15 @@ import { PasswordField } from './PasswordField';
 import {
   authQueryKey,
   normalizeAuthUser,
-  type AuthUser,
   type AuthUserResponse,
 } from './auth-state';
 import { errorMessage } from './auth-error';
 import { EmailField, AuthError, SocialDivider } from './AuthFields';
 import { authenticatedLanding, safeCustomerReturnPath } from '../../app/workspace-access';
 
-export function LoginForm({ currentUser }: { currentUser?: AuthUser }) {
-  const [email, setEmail] = useState(!currentUser ? 'customer@example.sample' : '');
-  const [password, setPassword] = useState(!currentUser ? 'Customer@12345' : '');
+export function LoginForm() {
+  const [email, setEmail] = useState('customer@example.sample');
+  const [password, setPassword] = useState('Customer@12345');
   const [error, setError] = useState('');
   const [needsVerification, setNeedsVerification] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -86,11 +85,6 @@ export function LoginForm({ currentUser }: { currentUser?: AuthUser }) {
         <p className="login-eyebrow">
           Aster Market <span>·</span> Your account
         </p>
-      )}
-      {admin && currentUser?.role === 'CUSTOMER' && (
-        <div className="auth-hint" role="status">
-          Signed in as {currentUser.email}. Enter an administrator account to switch.
-        </div>
       )}
       <form onSubmit={submit} className="auth-form">
         <EmailField value={email} onChange={setEmail} />
