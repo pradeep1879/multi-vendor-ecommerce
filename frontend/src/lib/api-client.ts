@@ -1,4 +1,7 @@
-const API_BASE = import.meta.env.VITE_API_URL ?? '/api/v1';
+const API_BASE =
+  import.meta.env.VITE_API_SAME_ORIGIN === 'true'
+    ? '/api/v1'
+    : (import.meta.env.VITE_API_URL ?? '/api/v1');
 
 type ApiEnvelope<T> = {
   data?: T;
