@@ -8,7 +8,7 @@
   padding: 8px 20px;
   text-align: center;
   font-size: 13px;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.02em;
 }
 .customer-store .store-header {
   border-bottom: 1px solid #eee;
@@ -45,7 +45,7 @@
   display: block;
   font-family: var(--store-font);
   letter-spacing: 0.03em;
-  font-size: 9px;
+  font-size: 11px;
   margin-top: 8px;
 }
 .customer-store .store-seller-link {

@@ -51,7 +51,7 @@ export function AccountSecurityPage() {
   return (
     <div className="space-y-5">
       <div>
-        <p className="text-sm font-semibold  tracking-[.18em] text-store-muted">
+        <p className="text-sm font-semibold tracking-[.04em] text-store-muted">
           Sign-in and safety
         </p>
         <h2 className="mt-2 font-store text-3xl font-normal">Security</h2>

@@ -20,7 +20,10 @@ export function OrderCard({ order }: { order: AccountOrder }) {
       <div className="flex flex-wrap items-center gap-3 py-4">
         {order.items.slice(0, 3).map((item, i) => (
           <div key={`${item.sku}-${i}`} className="flex min-w-[170px] flex-1 items-center gap-3">
-            <ProductThumb src={item.variant?.product?.images?.[0]?.url} alt={item.productName} />
+            <ProductThumb
+              src={item.product?.images[0]?.url}
+              alt={item.product?.images[0]?.alt ?? item.productName}
+            />
             <div>
               <p className="text-sm">{item.productName}</p>
               <p className="mt-1 text-sm text-store-muted">

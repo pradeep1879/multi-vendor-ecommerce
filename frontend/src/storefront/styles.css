@@ -97,8 +97,8 @@ button {
 }
 .wordmark span {
   font-family: 'DM Sans', sans-serif;
-  font-size: 7px;
-  letter-spacing: 0.24em;
+  font-size: 9px;
+  letter-spacing: 0.08em;
   margin-top: 7px;
   color: #89887e;
 }
@@ -276,7 +276,7 @@ button {
   top: 45%;
   writing-mode: vertical-rl;
   font-size: 8px;
-  letter-spacing: 0.23em;
+  letter-spacing: 0.04em;
   color: #5d5d53;
 }
 .ticker {
@@ -383,7 +383,7 @@ button {
   background: rgba(250, 249, 246, 0.94);
   padding: 7px 9px;
   font-size: 7px;
-  letter-spacing: 0.13em;
+  letter-spacing: 0.04em;
   color: #626658;
 }
 .save-button {
@@ -430,7 +430,7 @@ button {
 }
 .product-brand {
   font-size: 8px;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.04em;
   color: #8b897f;
   margin-bottom: 5px;
 }
@@ -670,7 +670,7 @@ button {
 }
 .footer-main h4 {
   font-size: 8px;
-  letter-spacing: 0.17em;
+  letter-spacing: 0.04em;
   font-weight: 600;
   margin: 5px 0 18px;
 }
@@ -809,7 +809,7 @@ button {
 }
 .admin-sidebar > div {
   font-size: 8px;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.04em;
   color: #949188;
   margin: 17px 10px 7px;
 }
@@ -1380,7 +1380,7 @@ button {
   gap: 14px;
   color: #96948a;
   font-size: 8px;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.04em;
   margin: 22px 0 15px;
 }
 .auth-divider:before,
@@ -1832,7 +1832,7 @@ button {
   background: #fff;
   padding: 8px 10px;
   font-size: 8px;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.04em;
 }
 .product-label + .product-stock-label {
   top: 47px;

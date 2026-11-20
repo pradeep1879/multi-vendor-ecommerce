@@ -47,9 +47,7 @@ export function PageTitle({
   return (
     <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
       <div>
-        <p className="text-sm font-semibold  tracking-[.18em] text-store-muted">
-          {eyebrow}
-        </p>
+        <p className="text-sm font-semibold tracking-[.04em] text-store-muted">{eyebrow}</p>
         <h2 className="mt-2 font-store text-3xl font-normal tracking-tight sm:text-3xl">{title}</h2>
         {description && (
           <p className="mt-2 max-w-2xl text-sm leading-6 text-store-muted">{description}</p>
@@ -133,13 +131,21 @@ export function Pager({
   ) : null;
 }
 
-export function ProductThumb({ src, alt }: { src?: string | null; alt: string }) {
+export function ProductThumb({
+  src,
+  alt,
+  className = 'h-14 w-12',
+}: {
+  src?: string | null;
+  alt: string;
+  className?: string;
+}) {
   return src ? (
-    <img src={src} alt={alt} className="h-14 w-12 shrink-0 object-cover bg-store-soft" />
+    <img src={src} alt={alt} className={`${className} shrink-0 bg-store-soft object-cover`} />
   ) : (
     <div
       aria-label={alt}
-      className="grid h-14 w-12 shrink-0 place-items-center bg-store-soft text-store-muted"
+      className={`grid ${className} shrink-0 place-items-center bg-store-soft text-store-muted`}
     >
       <ShoppingBag size={16} />
     </div>

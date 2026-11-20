@@ -9,7 +9,7 @@ import { ProductDetailPage } from '../pages/ProductDetailPage';
 import { CartPage, CheckoutPage } from '../pages/CartCheckoutPages';
 import { WishlistPage as StorefrontWishlistPage } from '../pages/WishlistPage';
 import { VendorApplicationPage } from '../pages/VendorApplicationPage';
-import { roleDestination } from './workspace-access';
+import { authenticatedLanding, roleDestination, safeCustomerReturnPath } from './workspace-access';
 
 const WorkspaceGate = lazy(() =>
   import('./Workspace').then((module) => ({ default: module.WorkspaceGate })),
@@ -96,10 +96,35 @@ function Authenticated({ children }: { children: ReactNode }) {
         Checking session…
       </div>
     );
-  if (!auth.data) return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+  const returnTo = `${location.pathname}${location.search}${location.hash}`;
+  if (!auth.data) return <Navigate to="/login" replace state={{ from: returnTo }} />;
   if (!auth.data.roles.includes('CUSTOMER'))
     return <Navigate to={roleDestination(auth.data.role, auth.data.vendorStatus)} replace />;
   return <>{children}</>;
+}
+
+function GuestOnly({ children }: { children: ReactNode }) {
+  const auth = useAuth();
+  const location = useLocation();
+  if (auth.isLoading)
+    return (
+      <div className="auth-loading" role="status">
+        Checking session…
+      </div>
+    );
+  if (!auth.data) return <>{children}</>;
+  const state = location.state as { from?: string } | null;
+  const returnTo = safeCustomerReturnPath(
+    state?.from ?? new URLSearchParams(location.search).get('next'),
+  );
+  const destination = authenticatedLanding(auth.data, returnTo);
+  return (
+    <Navigate
+      to={destination}
+      replace
+      state={destination === '/select-role' && returnTo ? { from: returnTo } : undefined}
+    />
+  );
 }
 
 function LoginRoute() {
@@ -112,10 +137,23 @@ function LoginRoute() {
     requestedPath.startsWith('/vendor') ||
     nextPath.startsWith('/admin') ||
     nextPath.startsWith('/vendor');
+  if (auth.isLoading)
+    return (
+      <div className="auth-loading" role="status">
+        Checking session…
+      </div>
+    );
   if (auth.data) {
     if (staffSwitch) return <LoginForm currentUser={auth.data} />;
-    if (auth.data.roles.length > 1) return <Navigate to="/select-role" replace />;
-    return <Navigate to={roleDestination(auth.data.role, auth.data.vendorStatus)} replace />;
+    const returnTo = safeCustomerReturnPath(requestedPath || nextPath);
+    const destination = authenticatedLanding(auth.data, returnTo);
+    return (
+      <Navigate
+        to={destination}
+        replace
+        state={destination === '/select-role' && returnTo ? { from: returnTo } : undefined}
+      />
+    );
   }
   return <LoginForm />;
 }
@@ -154,7 +192,14 @@ export default function App() {
           <Route path="/search" element={<ProductListingPage />} />
           <Route path="/category/:category" element={<CategoryListingRoute />} />
           <Route path="/cart" element={<CartPage />} />
-          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route
+            path="/checkout"
+            element={
+              <Authenticated>
+                <CheckoutPage />
+              </Authenticated>
+            }
+          />
           <Route path="/wishlist" element={<StorefrontWishlistPage />} />
           <Route
             path="/sell-with-us"
@@ -166,7 +211,14 @@ export default function App() {
           />
           {/* A valid customer session returns to the storefront; recovery stays independent. */}
           <Route path="/login" element={<LoginRoute />} />
-          <Route path="/signup" element={<SignupForm />} />
+          <Route
+            path="/signup"
+            element={
+              <GuestOnly>
+                <SignupForm />
+              </GuestOnly>
+            }
+          />
           <Route path="/forgot-password" element={<ForgotPasswordForm />} />
           <Route path="/reset-password" element={<ResetPasswordForm />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />

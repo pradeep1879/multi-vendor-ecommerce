@@ -1,12 +1,14 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { api } from '../api/client';
 import { showToast } from '../../components/feedback/toast';
 import { authQueryKey, type AuthRole, type AuthUser } from '../features/auth/auth-state';
 import { roleDestination } from './workspace-access';
+import { safeCustomerReturnPath } from './workspace-access';
 
 export function useRoleSwitch() {
   const navigate = useNavigate();
+  const location = useLocation();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (role: AuthRole) => {
@@ -19,7 +21,11 @@ export function useRoleSwitch() {
       queryClient.setQueryData(authQueryKey, (current: AuthUser | undefined) =>
         current ? { ...current, role, ...(vendorStatus ? { vendorStatus } : {}) } : current,
       );
-      navigate(roleDestination(role, vendorStatus), { replace: true });
+      const intended =
+        role === 'CUSTOMER'
+          ? safeCustomerReturnPath((location.state as { from?: string } | null)?.from)
+          : undefined;
+      navigate(intended ?? roleDestination(role, vendorStatus), { replace: true });
     },
     onError: () => showToast('We couldn’t switch workspaces. Please try again.', 'error'),
   });

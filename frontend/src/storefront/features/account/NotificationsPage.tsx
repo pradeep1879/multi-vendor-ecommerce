@@ -46,7 +46,7 @@ export function NotificationsPage() {
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-[9px]  tracking-wider text-store-muted">
+                    <span className="text-xs tracking-normal text-store-muted">
                       {readable(item.type)}
                     </span>
                     {!item.readAt && (

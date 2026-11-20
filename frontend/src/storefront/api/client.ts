@@ -24,7 +24,9 @@ api.interceptors.request.use((config) => {
     '/account/addresses': '/me/addresses',
   };
   if (aliases[path]) config.url = `${aliases[path]}${query}`;
-  if (path.startsWith('/products/'))
+  // Product reviews are served by the reviews module at /products/:id/reviews,
+  // while the product detail endpoint itself lives under /catalog/products.
+  if (path.startsWith('/products/') && !path.endsWith('/reviews'))
     config.url = path.replace('/products/', '/catalog/products/') + query;
   if (path.startsWith('/account/addresses/'))
     config.url = path.replace('/account/addresses/', '/me/addresses/') + query;

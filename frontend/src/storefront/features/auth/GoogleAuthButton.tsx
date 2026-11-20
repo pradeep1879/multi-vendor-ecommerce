@@ -5,6 +5,7 @@ import { api, setStorefrontAccessToken } from '../../api/client';
 import { authQueryKey, normalizeAuthUser, type AuthUserResponse } from './auth-state';
 import { errorMessage } from './auth-error';
 import { showToast } from '../../../components/feedback/toast';
+import { authenticatedLanding, safeCustomerReturnPath } from '../../app/workspace-access';
 
 export function GoogleAuthButton() {
   const processing = useRef(false);
@@ -58,18 +59,15 @@ export function GoogleAuthButton() {
               const user = response.data.data.user;
               const signedInUser = normalizeAuthUser(user);
               queryClient.setQueryData(authQueryKey, signedInUser);
-              navigate(
-                signedInUser.roles.length > 1
-                  ? '/select-role'
-                  : signedInUser.role === 'ADMIN'
-                    ? '/admin/dashboard'
-                    : signedInUser.role === 'VENDOR'
-                      ? signedInUser.vendorStatus === 'APPROVED'
-                        ? '/vendor/dashboard'
-                        : '/vendor/application-status'
-                      : '/',
-                { replace: true },
+              const requestedPath = (location.state as { from?: string } | null)?.from;
+              const intended = safeCustomerReturnPath(
+                requestedPath ?? new URLSearchParams(location.search).get('next'),
               );
+              const destination = authenticatedLanding(signedInUser, intended);
+              navigate(destination, {
+                replace: true,
+                state: destination === '/select-role' && intended ? { from: intended } : undefined,
+              });
             } catch (error) {
               if (!cancelled)
                 setMessage(
@@ -133,7 +131,9 @@ export function GoogleAuthButton() {
     setMessage('');
     googleIdentity.prompt((notification) => {
       if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-        setMessage('Google sign-in could not open. Check your browser privacy settings and try again.');
+        setMessage(
+          'Google sign-in could not open. Check your browser privacy settings and try again.',
+        );
       }
     });
   };
@@ -150,13 +150,31 @@ export function GoogleAuthButton() {
             <span className="google-auth-spinner" aria-hidden="true" />
           ) : (
             <svg viewBox="0 0 48 48" aria-hidden="true">
-              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5Z" />
-              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.73 7.18l7.3 5.66c4.27-3.94 7.47-9.77 7.47-17.31Z" />
-              <path fill="#FBBC05" d="M10.53 28.59a14.5 14.5 0 0 1 0-9.18l-7.98-6.2a23.95 23.95 0 0 0 0 21.58l7.98-6.2Z" />
-              <path fill="#34A853" d="M24 48c6.47 0 11.9-2.13 15.87-5.8l-7.3-5.66c-2.03 1.36-4.64 2.16-8.57 2.16-6.26 0-11.57-4.22-13.46-9.91l-7.98 6.2C6.51 42.62 14.62 48 24 48Z" />
+              <path
+                fill="#EA4335"
+                d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5Z"
+              />
+              <path
+                fill="#4285F4"
+                d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.73 7.18l7.3 5.66c4.27-3.94 7.47-9.77 7.47-17.31Z"
+              />
+              <path
+                fill="#FBBC05"
+                d="M10.53 28.59a14.5 14.5 0 0 1 0-9.18l-7.98-6.2a23.95 23.95 0 0 0 0 21.58l7.98-6.2Z"
+              />
+              <path
+                fill="#34A853"
+                d="M24 48c6.47 0 11.9-2.13 15.87-5.8l-7.3-5.66c-2.03 1.36-4.64 2.16-8.57 2.16-6.26 0-11.57-4.22-13.46-9.91l-7.98 6.2C6.51 42.62 14.62 48 24 48Z"
+              />
             </svg>
           )}
-          <span>{initializing ? 'Loading Google sign-in…' : signingIn ? 'Signing in…' : 'Sign in with Google'}</span>
+          <span>
+            {initializing
+              ? 'Loading Google sign-in…'
+              : signingIn
+                ? 'Signing in…'
+                : 'Sign in with Google'}
+          </span>
         </button>
       </div>
     </div>

@@ -10,7 +10,7 @@ export function OrderProgress({ order }: { order: AccountOrder }) {
         <h3 className="font-store text-xl">Order progress</h3>
         <Badge value={order.status} />
       </div>
-      <ol className="mt-5 grid gap-3 sm:grid-cols-4">
+      <ol className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {(order.shipment?.events?.length
           ? order.shipment.events
           : [

@@ -112,7 +112,7 @@
   color: var(--store-muted);
   font-size: 12px;
   font-weight: 400;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.04em;
 }
 .customer-store .skip-link {
   position: fixed;

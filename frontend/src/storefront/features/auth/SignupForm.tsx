@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { ArrowRight } from 'lucide-react';
 import { api, setStorefrontAccessToken } from '../../api/client';
@@ -12,6 +12,7 @@ import { isStrongPassword } from './password-policy';
 import { errorMessage } from './auth-error';
 import { EmailField, AuthError, SocialDivider } from './AuthFields';
 import { authQueryKey, normalizeAuthUser } from './auth-state';
+import { authenticatedLanding, safeCustomerReturnPath } from '../../app/workspace-access';
 
 export function SignupForm() {
   const [name, setName] = useState('');
@@ -22,6 +23,7 @@ export function SignupForm() {
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const queryClient = useQueryClient();
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -52,7 +54,15 @@ export function SignupForm() {
       const user = result.data.data.user;
       const signedInUser = normalizeAuthUser(user);
       queryClient.setQueryData(authQueryKey, signedInUser);
-      navigate(signedInUser.roles.length > 1 ? '/select-role' : '/', { replace: true });
+      const intended = safeCustomerReturnPath(
+        (location.state as { from?: string } | null)?.from ??
+          new URLSearchParams(location.search).get('next'),
+      );
+      const destination = authenticatedLanding(signedInUser, intended);
+      navigate(destination, {
+        replace: true,
+        state: destination === '/select-role' && intended ? { from: intended } : undefined,
+      });
     } catch (reason) {
       setError(errorMessage(reason, 'We couldn’t create your account. Please try again.'));
     } finally {
@@ -69,7 +79,9 @@ export function SignupForm() {
       }
       description="A little place for your favourite rituals."
     >
-      <p className="signup-eyebrow">Aster Market <span>·</span> Your account</p>
+      <p className="signup-eyebrow">
+        Aster Market <span>·</span> Your account
+      </p>
       <form onSubmit={submit} className="auth-form signup-form">
         <div className="signup-name">
           <label className="auth-field">
@@ -121,7 +133,10 @@ export function SignupForm() {
         <SocialDivider />
         <GoogleAuthButton />
         <div className="auth-switch">
-          Already have an account? <Link to="/login">Login</Link>
+          Already have an account?{' '}
+          <Link to="/login" state={location.state}>
+            Login
+          </Link>
         </div>
       </div>
     </AuthLayout>

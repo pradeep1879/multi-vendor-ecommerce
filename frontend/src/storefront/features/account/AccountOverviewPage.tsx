@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowRight, Heart, MapPin, Package, RotateCcw, Star, Truck } from 'lucide-react';
 import { accountApi } from './account-api';
-import { keys, price, readable } from './account-utils';
+import { keys, price } from './account-utils';
 import { State, PageTitle, Empty, Panel, Badge, ProductThumb } from './AccountUI';
 
 export function AccountOverviewPage() {
@@ -25,10 +25,10 @@ export function AccountOverviewPage() {
             action={
               <Link
                 to="/"
-                className="inline-flex h-10 items-center gap-2 bg-[#99ee0f] px-4 text-sm text-white hover:bg-[#a1f10c]"
+                className="inline-flex h-10 items-center gap-2 bg-store-ink px-4 text-sm text-white transition hover:opacity-90"
               >
                 Continue shopping
-                {/* <ArrowRight size={14} /> */}
+                <ArrowRight size={14} />
               </Link>
             }
           />
@@ -79,38 +79,52 @@ export function AccountOverviewPage() {
             ))}
           </div>
           {query.data.activeOrder && (
-            <Panel className="mt-5">
+            <Panel className="mt-5 overflow-hidden bg-gradient-to-br from-white to-store-soft/50">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <p className="text-sm  tracking-[.16em] text-store-muted">
+                  <p className="text-sm font-semibold tracking-[.04em] text-store-muted">
                     Your latest active order
                   </p>
-                  <h3 className="mt-1 font-store text-2xl">{query.data.activeOrder.number}</h3>
+                  <h3 className="mt-1 font-store text-2xl font-normal">
+                    {query.data.activeOrder.number}
+                  </h3>
                 </div>
                 <Badge
                   value={query.data.activeOrder.shipment?.status ?? query.data.activeOrder.status}
                 />
               </div>
-              <div className="mt-4 flex flex-wrap items-center gap-x-7 gap-y-2 text-sm text-store-muted">
-                {query.data.activeOrder.shipment?.courier && (
-                  <span>Courier · {query.data.activeOrder.shipment.courier}</span>
-                )}
-                {query.data.activeOrder.shipment?.trackingNumber && (
-                  <span>AWB · {query.data.activeOrder.shipment.trackingNumber}</span>
-                )}
-                {query.data.activeOrder.shipment?.events?.slice(0, 3).map((event) => (
-                  <span key={event.status + event.occurredAt}>
-                    {event.description ?? readable(event.status)} ·{' '}
-                    {new Date(event.occurredAt).toLocaleDateString('en-IN')}
-                  </span>
-                ))}
-                <Link
-                  to={`/account/orders/${query.data.activeOrder.id}`}
-                  className="inline-flex items-center gap-1 text-store-ink underline underline-offset-4"
-                >
-                  Track order
-                  <ArrowRight size={12} />
-                </Link>
+              <div className="mt-5 flex flex-wrap items-center justify-between gap-5 border-t border-store-line pt-5">
+                <div className="flex min-w-0 flex-wrap items-center gap-4">
+                  {query.data.activeOrder.items.slice(0, 3).map((item) => (
+                    <div className="flex items-center gap-3" key={item.id}>
+                      <ProductThumb
+                        src={item.product?.images[0]?.url}
+                        alt={item.product?.images[0]?.alt ?? item.productName}
+                        className="h-16 w-14 rounded-sm"
+                      />
+                      <div className="max-w-48">
+                        <p className="truncate text-sm font-medium">{item.productName}</p>
+                        <p className="mt-1 text-xs text-store-muted">
+                          {item.variantName} · Qty {item.quantity}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex flex-col items-start gap-2 text-xs text-store-muted sm:items-end">
+                  {query.data.activeOrder.shipment?.courier && (
+                    <span>Courier · {query.data.activeOrder.shipment.courier}</span>
+                  )}
+                  {query.data.activeOrder.shipment?.trackingNumber && (
+                    <span>AWB · {query.data.activeOrder.shipment.trackingNumber}</span>
+                  )}
+                  <Link
+                    to={`/account/orders/${query.data.activeOrder.id}`}
+                    className="inline-flex items-center gap-1 text-sm text-store-ink underline underline-offset-4"
+                  >
+                    Track order <ArrowRight size={12} />
+                  </Link>
+                </div>
               </div>
             </Panel>
           )}
@@ -118,9 +132,7 @@ export function AccountOverviewPage() {
             <Panel>
               <div className="mb-5 flex items-center justify-between">
                 <div>
-                  <p className="text-sm  tracking-[.16em] text-store-muted">
-                    Your latest activity
-                  </p>
+                  <p className="text-sm tracking-[.04em] text-store-muted">Your latest activity</p>
                   <h3 className="mt-1 font-store text-2xl font-normal">Recent orders</h3>
                 </div>
                 <Link to="/account/orders" className="text-sm underline underline-offset-4">
@@ -139,8 +151,9 @@ export function AccountOverviewPage() {
                         {order.items.slice(0, 2).map((item, i) => (
                           <ProductThumb
                             key={`${item.productName}-${i}`}
-                            src={item.variant?.product?.images?.[0]?.url}
-                            alt={item.productName}
+                            src={item.product?.images[0]?.url}
+                            alt={item.product?.images[0]?.alt ?? item.productName}
+                            className="h-12 w-10 rounded-sm border border-store-line"
                           />
                         ))}
                       </div>
@@ -167,9 +180,7 @@ export function AccountOverviewPage() {
             </Panel>
             <div className="space-y-5">
               <Panel>
-                <p className="text-sm  tracking-[.16em] text-store-muted">
-                  Saved for later
-                </p>
+                <p className="text-sm tracking-[.04em] text-store-muted">Saved for later</p>
                 <h3 className="mt-1 font-store text-2xl font-normal">Your wishlist</h3>
                 <p className="mt-2 text-sm text-store-muted">
                   {query.data.metrics.wishlist
@@ -187,9 +198,7 @@ export function AccountOverviewPage() {
               <Panel>
                 <div className="flex items-center gap-2">
                   <MapPin size={15} className="text-[#777d68]" />
-                  <p className="text-sm  tracking-[.16em] text-store-muted">
-                    Delivery details
-                  </p>
+                  <p className="text-sm tracking-[.04em] text-store-muted">Delivery details</p>
                 </div>
                 {query.data.addresses.length ? (
                   query.data.addresses.slice(0, 1).map((address) => (
@@ -222,7 +231,7 @@ export function AccountOverviewPage() {
             </div>
           </div>
           <Panel className="mt-5">
-            <p className="text-sm  tracking-[.16em] text-store-muted">Account shortcuts</p>
+            <p className="text-sm tracking-[.04em] text-store-muted">Account shortcuts</p>
             <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
               {[
                 ['Profile', '/account/profile'],

@@ -17,6 +17,31 @@ export function roleDestination(role: AuthRole, vendorStatus?: AuthUser['vendorS
   return '/';
 }
 
+export function safeCustomerReturnPath(path?: string | null) {
+  if (!path?.startsWith('/') || path.startsWith('//')) return undefined;
+  if (path.startsWith('/admin') || path.startsWith('/vendor')) return undefined;
+  if (
+    [
+      '/login',
+      '/signup',
+      '/forgot-password',
+      '/reset-password',
+      '/verify-email',
+      '/select-role',
+    ].some(
+      (route) => path === route || path.startsWith(`${route}?`) || path.startsWith(`${route}/`),
+    )
+  )
+    return undefined;
+  return path;
+}
+
+export function authenticatedLanding(user: AuthUser, returnTo?: string | null) {
+  if (user.roles.length > 1) return '/select-role';
+  if (user.role === 'CUSTOMER') return safeCustomerReturnPath(returnTo) ?? '/';
+  return roleDestination(user.role, user.vendorStatus);
+}
+
 export function nextVendorOrderAction(status: string) {
   const actions: Record<string, { status: string; label: string }> = {
     PLACED: { status: 'ACCEPTED', label: 'Accept order' },

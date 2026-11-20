@@ -111,7 +111,7 @@ export function ProfilePage() {
               </form>
             </Panel>
             <Panel>
-              <p className="text-sm  tracking-[.16em] text-store-muted">
+              <p className="text-sm tracking-[.04em] text-store-muted">
                 Account information
               </p>
               <dl className="mt-4 space-y-4 text-sm">

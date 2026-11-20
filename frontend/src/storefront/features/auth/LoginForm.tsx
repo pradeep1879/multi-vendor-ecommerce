@@ -16,6 +16,7 @@ import {
 } from './auth-state';
 import { errorMessage } from './auth-error';
 import { EmailField, AuthError, SocialDivider } from './AuthFields';
+import { authenticatedLanding, safeCustomerReturnPath } from '../../app/workspace-access';
 
 export function LoginForm({ currentUser }: { currentUser?: AuthUser }) {
   const [email, setEmail] = useState('');
@@ -46,34 +47,14 @@ export function LoginForm({ currentUser }: { currentUser?: AuthUser }) {
       setStorefrontAccessToken(accessToken);
       const signedInUser = normalizeAuthUser(user);
       queryClient.setQueryData(authQueryKey, signedInUser);
-      const intended = (routeLocation.state as { from?: string } | null)?.from;
-      const next = params.get('next');
-      const safeNext =
-        next?.startsWith('/') &&
-        !next.startsWith('//') &&
-        !next.startsWith('/admin') &&
-        !next.startsWith('/vendor')
-          ? next
-          : undefined;
-      const roleHome =
-        signedInUser.role === 'ADMIN'
-          ? '/admin/dashboard'
-          : signedInUser.role === 'VENDOR'
-            ? signedInUser.vendorStatus === 'APPROVED'
-              ? '/vendor/dashboard'
-              : '/vendor/application-status'
-            : '/';
-      navigate(
-        signedInUser.roles.length > 1
-          ? '/select-role'
-          : (safeNext ??
-              (intended?.startsWith('/') &&
-              !intended.startsWith('/admin') &&
-              !intended.startsWith('/vendor')
-                ? intended
-                : roleHome)),
-        { replace: true },
+      const intended = safeCustomerReturnPath(
+        (routeLocation.state as { from?: string } | null)?.from ?? params.get('next'),
       );
+      const destination = authenticatedLanding(signedInUser, intended);
+      navigate(destination, {
+        replace: true,
+        state: destination === '/select-role' && intended ? { from: intended } : undefined,
+      });
     } catch (reason) {
       setError(errorMessage(reason, 'We couldn’t sign you in. Check your details and try again.'));
       setNeedsVerification(
@@ -101,7 +82,11 @@ export function LoginForm({ currentUser }: { currentUser?: AuthUser }) {
             : 'Sign in to see your orders and saved items.'
       }
     >
-      {!admin && <p className="login-eyebrow">Aster Market <span>·</span> Your account</p>}
+      {!admin && (
+        <p className="login-eyebrow">
+          Aster Market <span>·</span> Your account
+        </p>
+      )}
       {admin && currentUser?.role === 'CUSTOMER' && (
         <div className="auth-hint" role="status">
           Signed in as {currentUser.email}. Enter an administrator account to switch.
@@ -140,7 +125,17 @@ export function LoginForm({ currentUser }: { currentUser?: AuthUser }) {
       )}
       {!admin && (
         <div className="auth-switch">
-          Don’t have an account? <Link to="/signup">Create new account</Link>
+          Don’t have an account?{' '}
+          <Link
+            to="/signup"
+            state={{
+              from: safeCustomerReturnPath(
+                (routeLocation.state as { from?: string } | null)?.from ?? params.get('next'),
+              ),
+            }}
+          >
+            Create new account
+          </Link>
         </div>
       )}
       {admin && (

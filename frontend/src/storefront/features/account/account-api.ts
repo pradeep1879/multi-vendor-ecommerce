@@ -25,7 +25,7 @@ export type AccountProduct = {
   unitPricePaise: number;
   taxPaise: number;
   discountPaise: number;
-  variant?: { product?: { images?: Array<{ url: string; alt: string }> } };
+  product?: { images: Array<{ url: string; alt: string }> };
 };
 export type AccountOrder = {
   id: string;
@@ -151,6 +151,7 @@ export type Overview = {
     id: string;
     number: string;
     status: string;
+    items: AccountProduct[];
     shipment: {
       trackingNumber: string | null;
       courier: string | null;
@@ -212,16 +213,30 @@ function toAccountOrder(value: TargetOrder): AccountOrder {
     shippingAddress: value.shippingAddress,
     createdAt: value.createdAt,
     updatedAt: value.createdAt,
-    items: (Array.isArray(value.items) ? value.items : []).map((item) => ({
-      id: String(item.id),
-      productName: String(item.productNameSnapshot ?? ''),
-      variantName: String(item.variantNameSnapshot ?? ''),
-      sku: String(item.skuSnapshot ?? ''),
-      quantity: Number(item.quantity ?? 0),
-      unitPricePaise: Number(item.unitPricePaise ?? 0),
-      taxPaise: Number(item.taxPaise ?? 0),
-      discountPaise: Number(item.discountPaise ?? 0),
-    })),
+    items: (Array.isArray(value.items) ? value.items : []).map((item) => {
+      const product = item.product as
+        { images?: Array<{ url?: string; altText?: string | null }> } | null | undefined;
+      return {
+        id: String(item.id),
+        productName: String(item.productNameSnapshot ?? ''),
+        variantName: String(item.variantNameSnapshot ?? ''),
+        sku: String(item.skuSnapshot ?? ''),
+        quantity: Number(item.quantity ?? 0),
+        unitPricePaise: Number(item.unitPricePaise ?? 0),
+        taxPaise: Number(item.taxPaise ?? 0),
+        discountPaise: Number(item.discountPaise ?? 0),
+        ...(product
+          ? {
+              product: {
+                images: (product.images ?? []).map((image) => ({
+                  url: image.url ?? '',
+                  alt: image.altText || String(item.productNameSnapshot ?? ''),
+                })),
+              },
+            }
+          : {}),
+      };
+    }),
     shipment: shipment
       ? {
           trackingNumber: shipment.trackingReference ?? null,
@@ -276,7 +291,7 @@ const addressBody = (value: Partial<Omit<Address, 'id'>>) => ({
   countryCode:
     value.country?.trim().toLowerCase() === 'india'
       ? 'IN'
-      : (value.country?.trim().toUpperCase().slice(0, 2) || 'IN'),
+      : value.country?.trim().toUpperCase().slice(0, 2) || 'IN',
   ...(value.isDefault !== undefined ? { isDefault: value.isDefault } : {}),
 });
 export const accountApi = {
@@ -317,6 +332,7 @@ export const accountApi = {
             id: active.id,
             number: active.number,
             status: active.status,
+            items: active.items,
             shipment: active.shipment
               ? {
                   trackingNumber: active.shipment.trackingNumber,

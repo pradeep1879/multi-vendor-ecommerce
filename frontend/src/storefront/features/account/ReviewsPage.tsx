@@ -120,7 +120,7 @@ export function ReviewsPage() {
             <Panel key={review.id} className="flex gap-4">
               <ProductThumb src={review.product.images[0]?.url} alt={review.product.name} />
               <div className="min-w-0 flex-1">
-                <p className="text-[9px]  tracking-wider text-store-muted">
+                <p className="text-xs tracking-normal text-store-muted">
                   {review.product.brand.name}
                 </p>
                 <h3 className="mt-1 font-store text-lg">{review.product.name}</h3>

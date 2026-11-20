@@ -48,9 +48,9 @@
 .store-account-nav-label {
   padding: 8px 14px 5px;
   color: var(--store-muted);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.04em;
   line-height: 1.4;
   text-transform: none;
 }
@@ -123,6 +123,7 @@
 .store-account-content h2 {
   font-size: 28px;
 }
+
 .store-account-content section {
   box-shadow: none;
 }
@@ -243,9 +244,9 @@
 .customer-store .signup-eyebrow {
   margin: 0 0 20px;
   color: var(--store-muted);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.04em;
   text-align: center;
 }
 .customer-store .signup-eyebrow span {
@@ -255,9 +256,9 @@
 .customer-store .login-eyebrow {
   margin: 0 0 20px;
   color: var(--store-muted);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.04em;
   text-align: center;
 }
 .customer-store .login-eyebrow span {

@@ -68,7 +68,7 @@ export function WishlistPage() {
                   </button>
                 </div>
                 <div className="p-4">
-                  <p className="text-[9px]  tracking-[.16em] text-store-muted">
+                  <p className="text-xs tracking-[.04em] text-store-muted">
                     {item.brand}
                   </p>
                   <h3 className="mt-1 font-store text-xl">{item.name}</h3>
