@@ -16,8 +16,8 @@ Sample accounts:
 - Password: d14876f1f2dd728a881bb21627d08d7c
 
 
-- Customer: `customer@example.test`
-- Password: 
+- Customer: `customer@example.sample`
+- Password: Customer@12345
 
 
 

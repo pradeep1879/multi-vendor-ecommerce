@@ -106,12 +106,6 @@ function Authenticated({ children }: { children: ReactNode }) {
 function GuestOnly({ children }: { children: ReactNode }) {
   const auth = useAuth();
   const location = useLocation();
-  if (auth.isLoading)
-    return (
-      <div className="auth-loading" role="status">
-        Checking session…
-      </div>
-    );
   if (!auth.data) return <>{children}</>;
   const state = location.state as { from?: string } | null;
   const returnTo = safeCustomerReturnPath(

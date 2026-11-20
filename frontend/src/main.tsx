@@ -20,7 +20,10 @@ import './storefront/styles/customer-account.css';
 
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
-    onError: (error) => {
+    onError: (error, query) => {
+      // A failed session bootstrap is handled by the route guards. Toasting it
+      // globally can stack repeated rate-limit errors over the login/signup UI.
+      if (query.queryKey[0] === 'auth' && query.queryKey[1] === 'me') return;
       if (isExpectedSessionError(error)) return;
       showToast(
         getErrorMessage(

@@ -21,20 +21,36 @@ import './workspace-login.css';
 
 export function WorkspaceLoginGate({ role }: { role: WorkspaceRole }) {
   const auth = useAuth();
-  if (auth.isLoading) return <div className="workspace-login-loading">Loading secure sign-in…</div>;
-  if (auth.data?.roles.length && auth.data.roles.length > 1)
+  if (!auth.isLoading && auth.data?.roles.length && auth.data.roles.length > 1)
     return <Navigate to="/select-role" replace />;
-  if (auth.data && canAccessWorkspace(role, auth.data.roles))
+  if (!auth.isLoading && auth.data && canAccessWorkspace(role, auth.data.roles))
     return <Navigate to={roleDestination(role, auth.data.vendorStatus)} replace />;
   return <WorkspaceLoginPage role={role} />;
 }
 
 function WorkspaceLoginPage({ role }: { role: WorkspaceRole }) {
   const admin = role === 'ADMIN';
+  const vendorAccounts = [
+    { label: 'Northstar Goods', email: 'vendor-one@example.test', password: 'f540077ae2bf3bc23cf41006929116e9' },
+    { label: 'Field & Form', email: 'vendor-two@example.test', password: 'd14876f1f2dd728a881bb21627d08d7c' },
+  ] as const;
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [vendorAccount, setVendorAccount] = useState(0);
+  const [email, setEmail] = useState(
+    import.meta.env.DEV
+      ? admin
+        ? 'admin@example.test'
+        : vendorAccounts[0].email
+      : '',
+  );
+  const [password, setPassword] = useState(
+    import.meta.env.DEV
+      ? admin
+        ? '486cfa7feb0ae266a50f6aeddc40392b'
+        : vendorAccounts[0].password
+      : '',
+  );
   const [error, setError] = useState('');
   useEffect(() => {
     if (error) showToast(error, 'error');
@@ -191,6 +207,26 @@ function WorkspaceLoginPage({ role }: { role: WorkspaceRole }) {
               : 'Use the approved account associated with your store.'}
           </p>
           <form onSubmit={submit} noValidate>
+            {import.meta.env.DEV && !admin && (
+              <label className="workspace-login-field">
+                Demo vendor account
+                <select
+                  value={vendorAccount}
+                  onChange={(event) => {
+                    const accountIndex = Number(event.target.value) === 1 ? 1 : 0;
+                    setVendorAccount(accountIndex);
+                    setEmail(vendorAccounts[accountIndex].email);
+                    setPassword(vendorAccounts[accountIndex].password);
+                  }}
+                >
+                  {vendorAccounts.map((account, index) => (
+                    <option key={account.email} value={index}>
+                      {account.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
             <label className="workspace-login-field">
               Email address
               <input

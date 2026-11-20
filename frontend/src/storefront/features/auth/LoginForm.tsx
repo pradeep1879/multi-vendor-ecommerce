@@ -19,8 +19,12 @@ import { EmailField, AuthError, SocialDivider } from './AuthFields';
 import { authenticatedLanding, safeCustomerReturnPath } from '../../app/workspace-access';
 
 export function LoginForm({ currentUser }: { currentUser?: AuthUser }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState(
+    import.meta.env.DEV && !currentUser ? 'customer@example.sample' : '',
+  );
+  const [password, setPassword] = useState(
+    import.meta.env.DEV && !currentUser ? 'Customer@12345' : '',
+  );
   const [error, setError] = useState('');
   const [needsVerification, setNeedsVerification] = useState(false);
   const [busy, setBusy] = useState(false);

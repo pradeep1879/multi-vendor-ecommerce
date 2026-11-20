@@ -188,7 +188,8 @@
   font-size: 10px;
   font-weight: 600;
 }
-.workspace-login-field input {
+.workspace-login-field input,
+.workspace-login-field select {
   width: 100%;
   height: 42px;
   display: block;
@@ -204,7 +205,11 @@
     border-color 0.15s,
     box-shadow 0.15s;
 }
-.workspace-login-field input:focus {
+.workspace-login-field select {
+  cursor: pointer;
+}
+.workspace-login-field input:focus,
+.workspace-login-field select:focus {
   border-color: var(--login-accent);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--login-accent) 12%, transparent);
 }
