@@ -1,72 +1,246 @@
-# Multi-Vendor Marketplace
+# Aster Market
 
-Multi-vendor marketplace implemented as independently managed React + TypeScript and Express + TypeScript applications. The backend runs on Bun and uses PostgreSQL with Prisma.
+A multi-vendor e-commerce platform where customers can shop for products, vendors can manage their stores, and admins can manage the entire marketplace.
 
-## Prerequisites
+Sample accounts:
 
-- Bun 1.3 or newer
-- PostgreSQL 16 or newer
-- A modern browser
+- Admin: `admin@example.test`
+- Password: 486cfa7feb0ae266a50f6aeddc40392b
 
-The customer storefront runs at `http://localhost:5173` and the backend at `http://localhost:3000` by default. Role protected admin and vendor workspaces are available at `/admin` and `/vendor`.
 
-## Install
+- Vendor: `vendor-one@example.test`
+- Password: f540077ae2bf3bc23cf41006929116e9
 
-Create a local database and configure the backend first:
 
-```sh
-createdb marketplace
-cp backend/.env.example backend/.env
-# Edit backend/.env: set DATABASE_URL for your PostgreSQL user, JWT_ACCESS_SECRET (32+ characters), and a local-only DEV_SEED_PASSWORD.
+- Vendor: `vendor-two@example.test`
+- Password: d14876f1f2dd728a881bb21627d08d7c
+
+
+- Customer: `customer@example.test`
+- Password: 
+
+
+
+
+## Features
+
+### Customer
+- Browse products, categories, and search.
+- Add products to wishlist and cart.
+- Manage addresses and checkout.
+- Track orders and view order history.
+- Submit product ratings and reviews.
+- Manage profile, notifications, returns, and refunds.
+- Sign up, login, Google login, and password recovery.
+- Apply to become a vendor.
+
+### Vendor
+- Vendor dashboard and store management.
+- Add, edit, and manage products.
+- Manage inventory and orders.
+- Update shipments and handle returns.
+- Access restricted to approved vendors.
+
+### Admin
+- Admin dashboard and marketplace overview.
+- Manage customers, vendors, and products.
+- Manage categories, orders, and returns.
+- Handle refunds and coupons.
+- Moderate product reviews.
+
+### Additional Features
+- Secure authentication and role-based access.
+- PostgreSQL database.
+- Redis support for cart caching.
+- Product image uploads.
+- Product search.
+- Razorpay test payments.
+- Sample data for local development.
+
+## Tech Stack
+
+| Technology | Purpose |
+|---|---|
+| React + Vite | Frontend |
+| TypeScript | Programming language |
+| Tailwind CSS | Styling |
+| Express.js | Backend |
+| Bun | Runtime and package manager |
+| PostgreSQL | Database |
+| Prisma | Database management |
+| Redis | Cart caching |
+| Elasticsearch | Product search |
+| S3 / MinIO | Image storage |
+| Razorpay | Payments |
+| Docker | Application setup |
+
+## Project Structure
+
+```text
+aster-market/
+├── backend/
+│   ├── prisma/          # Database and migrations
+│   ├── src/
+│   │   ├── common/
+│   │   ├── config/
+│   │   ├── modules/
+│   │   └── infrastructure/
+│   ├── Dockerfile
+│   └── openapi.yaml
+│
+├── frontend/
+│   ├── src/
+│   │   ├── app/
+│   │   ├── features/
+│   │   └── storefront/
+│   └── Dockerfile
+│
+├── docker-compose.yml
+└── README.md
 ```
 
-Install each application independently and apply the checked-in database migrations:
+## Getting Started
 
-```sh
+### Requirements
+- Bun 1.3+
+- Docker
+- PostgreSQL 16+
+
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+cd aster-market
+```
+
+### 2. Configure Environment
+
+```bash
+cp backend/.env.example backend/.env
+```
+
+Configure the required environment variables, including your database URL and JWT secret.
+
+### 3. Start the Application
+
+```bash
+docker compose up --build -d
+```
+
+### 4. Open the Application
+
+| Service | URL |
+|---|---|
+| Storefront | http://localhost:3001 |
+| Backend API | http://localhost:3000 |
+
+### Optional: Add Sample Data
+
+```bash
+DEV_SEED_PASSWORD='your-local-password' docker compose --profile seed run --rm seed
+```
+
+Sample accounts:
+
+- Admin: `admin@example.test`
+- Vendor: `vendor-one@example.test`
+- Vendor: `vendor-two@example.test`
+- Customer: `customer@example.test`
+
+Use the password provided in `DEV_SEED_PASSWORD` to log in.
+
+### Docker Commands
+
+```bash
+# Start
+docker compose up -d
+
+# View logs
+docker compose logs -f
+
+# Stop
+docker compose down
+```
+
+To remove database data as well:
+
+```bash
+docker compose down -v
+```
+
+**Warning:** This deletes your local database data.
+
+## Run Locally Without Docker
+
+Start PostgreSQL and configure `backend/.env`.
+
+Install dependencies:
+
+```bash
 cd backend
 bun install
 bun run db:deploy
+
 cd ../frontend
 bun install
 ```
 
-Copy each `.env.example` to `.env` when you need to override local defaults. The frontend example contains only browser-safe API and Google client configuration. Keep database, JWT, Google audience, S3 and payment credentials in `backend/.env`; never expose backend credentials through frontend variables.
+Start the backend:
 
-## Develop
-
-Run each app in a separate terminal:
-
-```sh
-cd backend && bun run dev
-cd frontend && bun run dev
+```bash
+cd backend
+bun run dev
 ```
 
-The backend serves `GET /health` for liveness and `GET /health/ready` for PostgreSQL readiness. To load deterministic development accounts and sample catalog data, run `cd backend && bun run db:seed` with the local-only `DEV_SEED_PASSWORD` set. Optional `DEV_SEED_ADMIN_PASSWORD`, `DEV_SEED_VENDOR_ONE_PASSWORD`, `DEV_SEED_VENDOR_TWO_PASSWORD`, and `DEV_SEED_CUSTOMER_PASSWORD` values assign separate passwords; each must be at least 12 characters. If omitted, each account uses `DEV_SEED_PASSWORD`. Seeded login emails are `admin@example.test`, `vendor-one@example.test`, `vendor-two@example.test`, and `customer@example.test`; the seed command prints which password variable applies to each account. Seeding is disabled when `NODE_ENV=production`.
+Start the frontend in another terminal:
 
-## Verify and build
-
-From either application directory, available scripts are:
-
-```sh
-bun run lint
-bun run typecheck
-bun test
-bun run build
+```bash
+cd frontend
+bun run dev
 ```
 
-`bun run start` starts the production server for that application. Frontend and backend dependencies, lockfiles, environment configuration, and scripts remain independent.
+Open http://localhost:5173.
 
-Backend schema commands include `bun run db:validate`, `bun run db:generate`, `bun run db:migrate -- --name descriptive_change`, and `bun run db:status`. Database integration tests require an isolated database name ending in `_test`, with migrations applied; set both `DATABASE_URL` and `DIRECT_URL` to that test database as well as `TEST_DATABASE_URL` before running `bun test`. Never run reset commands against shared or production databases. See `docs/production-migration.md` for the merger backfill runbook.
+## Environment Variables
 
-## Configuration
+Important variables:
 
-Backend settings include `NODE_ENV`, `PORT`, `DATABASE_URL`, `JWT_ACCESS_SECRET`, token lifetimes, `CORS_ORIGINS`, `JSON_BODY_LIMIT`, and global/authentication rate limits. Invalid values produce a clear startup error. The backend API contract is maintained in `backend/openapi.yaml`. The Vite frontend reads `VITE_API_URL`, `VITE_DEV_API_URL`, `VITE_GOOGLE_CLIENT_ID`, and `VITE_LOCAL_ORIGIN`; only the Google client ID is intended for browser exposure.
+| Variable | Purpose |
+|---|---|
+| `DATABASE_URL` | Database connection |
+| `JWT_ACCESS_SECRET` | Authentication security |
+| `FRONTEND_URL` | Frontend address |
+| `REDIS_URL` | Redis connection |
+| `GOOGLE_CLIENT_ID` | Google login |
+| `VITE_API_URL` | Backend address |
+| `PAYMENT_KEY_ID` | Razorpay key ID |
+| `PAYMENT_KEY_SECRET` | Razorpay secret |
+| `S3_BUCKET` | Image storage |
 
-## Merged integrations
+Keep all private keys and secrets in `backend/.env`. Never expose them in frontend environment variables.
 
-- **Customer UI:** Maison Beauté customer routes start at `/`. Admins use `/admin`; approved vendors use `/vendor`. Both workspaces share a dashboard visual system and expose actions supported by the role's API.
-- **Google sign-in:** set `GOOGLE_CLIENT_ID` in the backend and the matching public `VITE_GOOGLE_CLIENT_ID` in the frontend. The backend verifies Google ID tokens and grants new accounts the customer role. No OAuth client secret is used by this ID-token flow.
-- **S3 images:** set the `S3_*` backend variables in `backend/.env` to enable authorized presigned upload, completion, replacement and deletion. The browser receives only presigned URLs and public image URLs.
-- **Razorpay:** use the target backend variables `PAYMENT_PROVIDER=razorpay`, `PAYMENT_KEY_ID`, `PAYMENT_KEY_SECRET` and `PAYMENT_WEBHOOK_SECRET`. Configure the provider webhook URL as `https://<public-api-host>/api/v1/payments/webhook` and subscribe to payment captured/failed and refund processed/failed events supported by the account. Keep credentials server-side.
-- **Email delivery:** password reset and email verification use the backend Resend adapter. Set `RESEND_API_KEY`, `AUTH_EMAIL_FROM`, and `FRONTEND_URL` in the backend environment. In local development, `AUTH_EMAIL_DELIVERY=console` explicitly logs one-time links to the development console. No provider credentials are configured in this checkout.
-- **Testing:** Google, Razorpay live/test dashboard callbacks and real S3 object operations require external credentials. Local fixture and mocked-provider coverage is documented separately and must not be treated as provider verification.
+## Useful Commands
+
+Run these commands from the relevant application directory.
+
+| Command | Purpose |
+|---|---|
+| `bun run dev` | Start development server |
+| `bun run build` | Build application |
+| `bun run start` | Start production server |
+| `bun run typecheck` | Check TypeScript |
+| `bun run lint` | Check code |
+| `bun test` | Run tests |
+| `bun run db:generate` | Generate Prisma client |
+| `bun run db:deploy` | Apply database migrations |
+| `bun run db:seed` | Add sample data |
+
+## Documentation
+
+- `backend/README.md` – Backend setup.
+- `frontend/README.md` – Frontend setup.
+- `backend/openapi.yaml` – API documentation.
+
+---
+
+**Built with React, TypeScript, Express, PostgreSQL, and Bun.**

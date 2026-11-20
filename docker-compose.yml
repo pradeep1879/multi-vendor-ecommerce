@@ -5,39 +5,134 @@ services:
       POSTGRES_DB: marketplace
       POSTGRES_USER: marketplace
       POSTGRES_PASSWORD: local-only-change-me
-    ports: ["5432:5432"]
-    volumes: ["postgres-data:/var/lib/postgresql/data"]
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U marketplace -d marketplace"]
       interval: 5s
       timeout: 3s
       retries: 15
+
   redis:
     image: redis:7.4.2-alpine
-    ports: ["6379:6379"]
+    ports:
+      - "6379:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 3s
       retries: 10
+
+  migrate:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - path: ./backend/.env
+        required: false
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://marketplace:local-only-change-me@postgres:5432/marketplace?schema=public
+      DIRECT_URL: ""
+    command: ["bun", "run", "db:deploy"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - path: ./backend/.env
+        required: false
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://marketplace:local-only-change-me@postgres:5432/marketplace?schema=public
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-local-compose-secret-change-this-before-sharing-123456}
+      FRONTEND_URL: http://localhost:3001
+      CORS_ORIGINS: http://localhost:3001
+      REDIS_URL: redis://redis:6379
+      PAYMENT_PROVIDER: ${PAYMENT_PROVIDER:-disabled}
+    ports:
+      - "3000:3000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "bun",
+          "-e",
+          "fetch('http://127.0.0.1:3000/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://localhost:3000/api/v1
+    ports:
+      - "3001:3001"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  seed:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - path: ./backend/.env
+        required: false
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://marketplace:local-only-change-me@postgres:5432/marketplace?schema=public
+      DEV_SEED_PASSWORD: ${DEV_SEED_PASSWORD:-local-seed-password-change-me}
+    command: ["bun", "run", "db:seed"]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    profiles: [seed]
+    restart: "no"
+
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.17.1
     environment:
       discovery.type: single-node
       xpack.security.enabled: "false"
       ES_JAVA_OPTS: -Xms512m -Xmx512m
-    ports: ["9200:9200"]
+    ports:
+      - "9200:9200"
     profiles: [search]
-    volumes: ["search-data:/usr/share/elasticsearch/data"]
+    volumes:
+      - search-data:/usr/share/elasticsearch/data
+
   minio:
     image: minio/minio:RELEASE.2025-02-07T23-21-09Z
     command: server /data --console-address :9001
     environment:
       MINIO_ROOT_USER: local-minio
       MINIO_ROOT_PASSWORD: local-minio-password-change-me
-    ports: ["9000:9000", "9001:9001"]
+    ports:
+      - "9000:9000"
+      - "9001:9001"
     profiles: [storage]
-    volumes: ["minio-data:/data"]
+    volumes:
+      - minio-data:/data
+
 volumes:
   postgres-data:
   search-data:
