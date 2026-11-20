@@ -393,6 +393,18 @@ export class OrdersRepository {
       where: { customerId: userId },
       orderBy: { createdAt: 'desc' },
       include: {
+        items: {
+          include: {
+            product: {
+              select: {
+                images: {
+                  orderBy: [{ isPrimary: 'desc' }, { sortOrder: 'asc' }],
+                  select: { url: true, altText: true },
+                },
+              },
+            },
+          },
+        },
         vendorOrders: { include: { items: true, shipment: { include: { events: true } } } },
       },
     });
@@ -408,7 +420,18 @@ export class OrdersRepository {
             shipment: { include: { events: { orderBy: { occurredAt: 'asc' } } } },
           },
         },
-        items: true,
+        items: {
+          include: {
+            product: {
+              select: {
+                images: {
+                  orderBy: [{ isPrimary: 'desc' }, { sortOrder: 'asc' }],
+                  select: { url: true, altText: true },
+                },
+              },
+            },
+          },
+        },
         statusHistory: { orderBy: { createdAt: 'asc' } },
         payment: { select: { status: true, provider: true, amountPaise: true } },
       },

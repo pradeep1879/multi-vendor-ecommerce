@@ -15,6 +15,8 @@ WORKDIR /app
 COPY --from=build --chown=bun:bun /app/package.json /app/bun.lock ./
 COPY --from=build --chown=bun:bun /app/node_modules ./node_modules
 COPY --from=build --chown=bun:bun /app/prisma ./prisma
+COPY --from=build --chown=bun:bun /app/prisma.config.ts ./prisma.config.ts
+COPY --from=build --chown=bun:bun /app/src/prisma-client ./src/prisma-client
 COPY --from=build --chown=bun:bun /app/dist ./dist
 USER bun
 EXPOSE 3000
