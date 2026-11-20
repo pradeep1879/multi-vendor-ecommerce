@@ -137,12 +137,6 @@ function LoginRoute() {
     requestedPath.startsWith('/vendor') ||
     nextPath.startsWith('/admin') ||
     nextPath.startsWith('/vendor');
-  if (auth.isLoading)
-    return (
-      <div className="auth-loading" role="status">
-        Checking session…
-      </div>
-    );
   if (auth.data) {
     if (staffSwitch) return <LoginForm currentUser={auth.data} />;
     const returnTo = safeCustomerReturnPath(requestedPath || nextPath);
