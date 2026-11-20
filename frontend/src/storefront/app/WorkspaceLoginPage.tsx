@@ -38,18 +38,10 @@ function WorkspaceLoginPage({ role }: { role: WorkspaceRole }) {
   const navigate = useNavigate();
   const [vendorAccount, setVendorAccount] = useState(0);
   const [email, setEmail] = useState(
-    import.meta.env.DEV
-      ? admin
-        ? 'admin@example.test'
-        : vendorAccounts[0].email
-      : '',
+    admin ? 'admin@example.test' : vendorAccounts[0].email,
   );
   const [password, setPassword] = useState(
-    import.meta.env.DEV
-      ? admin
-        ? '486cfa7feb0ae266a50f6aeddc40392b'
-        : vendorAccounts[0].password
-      : '',
+    admin ? '486cfa7feb0ae266a50f6aeddc40392b' : vendorAccounts[0].password,
   );
   const [error, setError] = useState('');
   useEffect(() => {
@@ -207,7 +199,7 @@ function WorkspaceLoginPage({ role }: { role: WorkspaceRole }) {
               : 'Use the approved account associated with your store.'}
           </p>
           <form onSubmit={submit} noValidate>
-            {import.meta.env.DEV && !admin && (
+            {!admin && (
               <label className="workspace-login-field">
                 Demo vendor account
                 <select
